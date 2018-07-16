@@ -8,8 +8,15 @@ export default class Server extends Component {
 
   getBlockchainInformation() {
     APIClient.getBlockchainInformation(response => {
-      console.log(response)
+      console.log(response.result)
+      this.setState({bitcoinBlockchainInformation: response.result})
     })
+  }
+
+  constructor(props) {
+    super()
+    this.state = {bitcoinBlockchainInformation: {}}
+    this.getBlockchainInformation()
   }
 
 
@@ -31,7 +38,7 @@ export default class Server extends Component {
       Node Type
     </Col>
     <Col xs={12} md={4}>
-      Type
+      { this.state.bitcoinBlockchainInformation.pruned === false ? 'Full Node' : 'Pruned'}
     </Col>
   </Row>
 
@@ -40,7 +47,7 @@ export default class Server extends Component {
       Device At Block
     </Col>
     <Col xs={6} md={4}>
-      Type
+    { this.state.bitcoinBlockchainInformation.blocks}
     </Col>
   </Row>
 
@@ -49,7 +56,7 @@ export default class Server extends Component {
       Network Block:
     </Col>
     <Col md={6} mdPull={6}>
-      NW Block
+    { this.state.bitcoinBlockchainInformation.headers}
     </Col>
   </Row>
 
@@ -109,7 +116,7 @@ export default class Server extends Component {
     </Col>
   </Row>
 
-</Grid>;
+</Grid>
        </div>
     )
   }
