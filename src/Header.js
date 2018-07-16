@@ -7,13 +7,12 @@ class Header extends Component {
     return(
         <Navbar collapseOnSelect>
             <Navbar.Header>
-                <LinkContainer to="/server">        
-                    <Navbar.Brand>
-                    <img 
-                        src={require('./images/bitseed.png')} 
-                    />
-                    </Navbar.Brand>
-                </LinkContainer>        
+                <Navbar.Brand>
+                <img 
+                    src={require('./images/bitseed.png')} 
+                    alt="Bitseed Logo"
+                />
+                </Navbar.Brand>
             <Navbar.Toggle />
             </Navbar.Header>
             <Nav>

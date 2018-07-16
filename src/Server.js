@@ -1,19 +1,115 @@
+
+
 import React, { Component } from 'react'
-const Bitcoin = require('bitcoin-core')
+import { Grid, Row, Col } from 'react-bootstrap'
+import APIClient from './APIClient'
 
 export default class Server extends Component {
-  render() {
-    const client = new Bitcoin({ 
-        host: '192.168.1.10',
-        username: 'bitcoinrpc',
-        password: 'bitseed',
-        port: '8332',
-        ssl: { enabled: false }
-    })
 
+  getBlockchainInformation() {
+    APIClient.getBlockchainInformation(response => {
+      console.log(response)
+    })
+  }
+
+
+  render() {
     return (
-        <div>
-        Server
+        <div >
+          <Grid>
+  <Row className="show-grid">
+    <Col xs={12} md={8}>
+      Bitcoin Core Version
+    </Col>
+    <Col xs={6} md={4}>
+      Version
+    </Col>
+  </Row>
+
+  <Row className="show-grid">
+    <Col xs={6} md={4}>
+      Node Type
+    </Col>
+    <Col xs={12} md={4}>
+      Type
+    </Col>
+  </Row>
+
+  <Row className="show-grid">
+    <Col xs={6} xsOffset={6}>
+      Device At Block
+    </Col>
+    <Col xs={6} md={4}>
+      Type
+    </Col>
+  </Row>
+
+  <Row className="show-grid">
+    <Col md={6} mdPush={6}>
+      Network Block:
+    </Col>
+    <Col md={6} mdPull={6}>
+      NW Block
+    </Col>
+  </Row>
+
+  <Row className="show-grid">
+    <Col md={6} mdPush={6}>
+      Peer Connections:
+    </Col>
+    <Col md={6} mdPull={6}>
+      Peer Connection 
+    </Col>
+  </Row>
+
+    <Row className="show-grid">
+    <Col md={6} mdPush={6}>
+      Tx in Mempool:
+    </Col>
+    <Col md={6} mdPull={6}>
+    Mempool
+    </Col>
+  </Row>
+
+    <Row className="show-grid">
+    <Col md={6} mdPush={6}>
+      Minimum Relay Fee:
+    </Col>
+    <Col md={6} mdPull={6}>
+    Fee
+    </Col>
+  </Row>
+
+
+    <Row className="show-grid">
+    <Col md={6} mdPush={6}>
+    Public IP Address:
+    </Col>
+    <Col md={6} mdPull={6}>
+    Public IP
+    </Col>
+  </Row>
+
+
+    <Row className="show-grid">
+    <Col md={6} mdPush={6}>
+    Device ID:
+    </Col>
+    <Col md={6} mdPull={6}>
+    ID
+    </Col>
+  </Row>
+
+  <Row className="show-grid">
+    <Col md={6} mdPush={6}>
+    Device Version:
+    </Col>
+    <Col md={6} mdPull={6}>
+    Version
+    </Col>
+  </Row>
+
+</Grid>;
        </div>
     )
   }
