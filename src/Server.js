@@ -25,7 +25,7 @@ export default class Server extends Component {
     this.getBlockchainInformation()
   }
 
-  renderRowWithColumn(title, description) {
+  renderRowWithColumn(title, description = 'No Data') {
     return(
       <Row className="show-grid">
         <Col xs={1} md={4}></Col>
@@ -44,7 +44,7 @@ export default class Server extends Component {
     return (
         <div >
           <Grid>
-            {this.renderRowWithColumn('Bitcoin Core Version','Version')}
+            {this.renderRowWithColumn('Bitcoin Core Version','No Data')}
             {this.renderRowWithColumn('Node Type', this.state.bitcoinBlockchainInformation.pruned === false ? 'Full Node' : 'Pruned')}
             {this.renderRowWithColumn('Device At Block', this.state.bitcoinBlockchainInformation.blocks)}
             {this.renderRowWithColumn('Network Block', this.state.bitcoinBlockchainInformation.headers)}
