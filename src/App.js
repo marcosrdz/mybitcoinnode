@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import Server from './Server'
 import Wallet from './Wallet'
 import Header from './Header'
+import Settings from './Settings'
 
 class App extends Component {
   render() {
@@ -13,6 +14,7 @@ class App extends Component {
         <Switch>
         <Route exact path='/server' component={Server} />
         <Route exact path='/wallet' component={Wallet} />
+        <Route exact path='/settings' component={Settings} />
           </Switch>
         </React.Fragment>
       </Router>

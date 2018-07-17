@@ -27,6 +27,13 @@ class Header extends Component {
                     </NavItem>
                 </LinkContainer>
             </Nav>
+            <Nav pullRight>
+                <LinkContainer to="/settings">        
+                    <NavItem eventKey={3}>
+                        Settings
+                    </NavItem>
+                </LinkContainer>
+            </Nav>
         </Navbar>
     )
   }
