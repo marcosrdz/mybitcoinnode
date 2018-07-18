@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
-import Server from './Server'
-import Wallet from './Wallet'
+import Bitcoin from './Bitcoin'
+import Electrum from './Electrum'
 import Header from './Header'
 import Settings from './Settings'
 
@@ -12,8 +12,8 @@ class App extends Component {
         <React.Fragment>       
         <Header />
         <Switch>
-        <Route exact path='/server' component={Server} />
-        <Route exact path='/wallet' component={Wallet} />
+        <Route exact path='/bitcoin' component={Bitcoin} />
+        <Route exact path='/electrum' component={Electrum} />
         <Route exact path='/settings' component={Settings} />
           </Switch>
         </React.Fragment>

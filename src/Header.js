@@ -16,14 +16,14 @@ class Header extends Component {
             <Navbar.Toggle />
             </Navbar.Header>
             <Nav>
-                <LinkContainer to="/server">
+                <LinkContainer to="/bitcoin">
                     <NavItem eventKey={1}>
-                    Server
+                    Bitcoin
                     </NavItem>
                 </LinkContainer>
-                <LinkContainer to="/wallet">        
+                <LinkContainer to="/electrum">        
                     <NavItem eventKey={2}>
-                    Wallet
+                    Electrum
                     </NavItem>
                 </LinkContainer>
             </Nav>

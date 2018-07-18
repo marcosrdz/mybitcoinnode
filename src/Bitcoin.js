@@ -4,7 +4,7 @@ import React, { Component } from 'react'
 import { Grid, Row, Col } from 'react-bootstrap'
 import APIClient from './APIClient'
 
-export default class Server extends Component {
+export default class Bitcoin extends Component {
 
   getBlockchainInformation() {
     APIClient.getBlockchainInformation(response => {
