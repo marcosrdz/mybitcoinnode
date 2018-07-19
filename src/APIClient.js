@@ -28,6 +28,14 @@ export default class APIClient {
         return APIClient.fetchJSON('getmempoolinfo', handler)
     }
 
+    static getPingResult(handler) {
+        return APIClient.fetchJSON('ping', handler)
+    }
+
+    static stopDaemon(handler) {
+        return APIClient.fetchJSON('stop', handler)
+    }
+
 }
 
 const clientInfo = {
@@ -36,4 +44,7 @@ const clientInfo = {
     username: 'bitcoinrpc',
     password: 'bitseed',
     port: '8332'
-  }
+}
+const responses = {
+    bitcoinServerStopping: 'Bitcoin server stopping'
+}

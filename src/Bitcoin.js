@@ -6,32 +6,87 @@ import APIClient from './APIClient'
 import Grid from 'react-css-grid'
 const publicIP = require('public-ip')
 
+
+
 export default class Bitcoin extends Component {
 
-  getData() {
+  getNodeToShutDown() {
+    this.setState({
+      isBitcoinDaemonStatusLoading: true,
+      bitcoinDaemonButtonStyle: 'primary',
+      bitcoinDaemonButtonText: 'Stopping...'
+    }, () => {
+      APIClient.stopDaemon(response => {
+        if (response.result === APIClient.responses) {
+          this.setState({
+            isBitcoinDaemonStatusLoading: false,
+            bitcoinDaemonButtonStyle: 'success'
+          })
+        }
+      })
+    })
+  }
+
+  getNetworkInformation() {
     publicIP.v4().then(ip => this.setState({ publicIPAddress: ip}))
 
     APIClient.getBlockchainInformation(response => {
-      this.setState({
-        headers: response.result.headers,
-        blocks: response.result.blocks
-      })
+      if (response.result != undefined) {
+        this.setState({
+          headers: response.result.headers,
+          blocks: response.result.blocks
+        })
+      }
     })
 
     APIClient.getNetworkInfo(response => {
-      this.setState({
-        btcCoreVersion: response.result.subversion,
-        connectedPeers: response.result.connections,
-        relayfee: response.result.relayfee
-      })
+      if (response.result != undefined) {
+        this.setState({
+          btcCoreVersion: response.result.subversion,
+          connectedPeers: response.result.connections,
+          relayfee: response.result.relayfee
+        })
+      }
     })
 
     APIClient.getMempoolInfo(response => {
-      this.setState({
-        txmempool: response.result.size,
-        minrelaytxfee: response.result.minrelaytxfee
-      })
+      if (response.result != undefined) {
+        this.setState({
+          txmempool: response.result.size,
+          minrelaytxfee: response.result.minrelaytxfee
+        })
+      }
     })
+  }
+
+  getNodeStatus() {
+    APIClient.getPingResult(response => {
+      console.log(response)
+      if (response.statusCode === 502) {
+        this.setState({
+          isBitcoinDaemonStatusLoading: false,
+          bitcoinDaemonButtonStyle: 'success',
+          bitcoinDaemonButtonText: 'Start'
+        })
+      } else if (response.result === null) {
+        if (response.error != null && response.error.code === -28) {
+          this.setState({
+            isBitcoinDaemonStatusLoading: true,
+            bitcoinDaemonButtonStyle: 'primary',
+            bitcoinDaemonButtonText: 'Loading...'
+          })
+        } else {
+          this.setState({
+            isBitcoinDaemonStatusLoading: false,
+            bitcoinDaemonButtonStyle: 'danger',
+            bitcoinDaemonButtonText: 'Stop'
+          })
+          this.getNetworkInformation()
+        }
+      } else {
+      
+      }
+    }) 
   }
 
   constructor(props) {
@@ -45,12 +100,14 @@ export default class Bitcoin extends Component {
       btcCoreVersion: '',
       minrelaytxfee: '',
       publicIPAddress: '',
-      txmempool: ''
+      txmempool: '',
+      bitcoinDaemonButtonStyle: 'primary',
+      bitcoinDaemonButtonText: 'Starting...'
     }
   }
 
   componentDidMount() {
-    this.getData()
+    this.getNodeStatus()
   }
 
   renderRowWithColumn(title, description = 'No Data') {
@@ -65,38 +122,65 @@ export default class Bitcoin extends Component {
     )
   }
 
+  renderLoadingIndicatorOrData() {
+    if (this.state.isBitcoinDaemonStatusLoading) {
+      return(
+        <React.Fragment>
+          Bitcoin Core Server is {this.state.bitcoinDaemonButtonText.toLowerCase()}...
+        </React.Fragment>
+      )
+    } else if (!this.state.isBitcoinDaemonStatusLoading && this.state.bitcoinDaemonButtonStyle === 'success') {
+      return (
+        <React.Fragment>
+        Bitcoin Core Server is not running.
+      </React.Fragment>
+      )
+    } 
+    else {
+      return(
+        <React.Fragment>
+          {this.renderRowWithColumn('Bitcoin Core Version', this.state.btcCoreVersion)}
+          {this.renderRowWithColumn('Node Type', this.state.pruned === false ? 'Full Node' : 'Pruned')}
+          {this.renderRowWithColumn('Device At Block', this.state.blocks)}
+          {this.renderRowWithColumn('Network Block', this.state.headers)}
+          {this.renderRowWithColumn('Peer Connection', this.state.connectedPeers)}
+          {this.renderRowWithColumn('Tx in Mempool', this.state.txmempool)}
+          {this.renderRowWithColumn('Minimum Relay Fee', this.state.minrelaytxfee)}
+          {this.renderRowWithColumn('Public IP Address', this.state.publicIPAddress)}
+          {this.renderRowWithColumn('Device ID', 'No Data')}
+          {this.renderRowWithColumn('Device Version', 'No Data')}
+        </React.Fragment>
+      )
+    }
+  }
+
   render() {
     return (
       <div style={{ textAlign: 'center'}}>
-      <div style={{ width: '600px',   marginLeft: 'auto', marginRight: 'auto', textAlign: 'left'}}>
-      <Grid>
-        <Panel>
-            <Panel.Heading>
-            <Grid width={96} gap={16} align='center'>
-              <Panel.Title>Bitcoin Daemon Status</Panel.Title>
-              <Button
-                bsStyle="primary"
-                disabled={this.state.isBitcoinDaemonStatusLoading}
-                onClick={!this.state.isBitcoinDaemonStatusLoading ? this.handleClick : null}
-              >
-              {this.state.isBitcoinDaemonStatusLoading ? 'Loading...' : 'Loading state'}
-              </Button>
-              </Grid>
-            </Panel.Heading>
-            <Panel.Body>
-                {this.renderRowWithColumn('Bitcoin Core Version', this.state.btcCoreVersion)}
-                {this.renderRowWithColumn('Node Type', this.state.pruned === false ? 'Full Node' : 'Pruned')}
-                {this.renderRowWithColumn('Device At Block', this.state.blocks)}
-                {this.renderRowWithColumn('Network Block', this.state.headers)}
-                {this.renderRowWithColumn('Peer Connection', this.state.connectedPeers)}
-                {this.renderRowWithColumn('Tx in Mempool', this.state.txmempool)}
-                {this.renderRowWithColumn('Minimum Relay Fee', this.state.minrelaytxfee)}
-                {this.renderRowWithColumn('Public IP Address', this.state.publicIPAddress)}
-                {this.renderRowWithColumn('Device ID', 'No Data')}
-                {this.renderRowWithColumn('Device Version', 'No Data')}
-          </Panel.Body>        
-          </Panel>
-        </Grid></div></div>
+        <div style={{ width: '600px',   marginLeft: 'auto', marginRight: 'auto', textAlign: 'left'}}>
+        <Grid>
+          <Panel>
+              <Panel.Heading>
+              <Grid width={96} gap={240} align='center'>
+                  <Panel.Title>Bitcoin Daemon Status</Panel.Title>
+                    <Button
+                      bsStyle={this.state.bitcoinDaemonButtonStyle}
+                      disabled={this.state.isBitcoinDaemonStatusLoading}
+                      onClick={!this.state.isBitcoinDaemonStatusLoading ? () => {
+                        if (window.confirm('Are you sure you wish to stop the Bitcoin Server?')) this.getNodeToShutDown()             
+                      } : null}
+                    >
+                    {this.state.bitcoinDaemonButtonText}
+                    </Button>
+                </Grid>
+              </Panel.Heading>
+              <Panel.Body>
+                  {this.renderLoadingIndicatorOrData()}
+            </Panel.Body>        
+            </Panel>
+          </Grid>
+        </div>
+      </div>
     )
   }
 }
