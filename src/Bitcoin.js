@@ -4,9 +4,7 @@ import React, { Component } from 'react'
 import { Panel, Button } from 'react-bootstrap'
 import APIClient from './APIClient'
 import Grid from 'react-css-grid'
-const publicIP = require('public-ip')
-
-
+import Addresses from './Addresses'
 
 export default class Bitcoin extends Component {
 
@@ -28,10 +26,8 @@ export default class Bitcoin extends Component {
   }
 
   getNetworkInformation() {
-    publicIP.v4().then(ip => this.setState({ publicIPAddress: ip}))
-
     APIClient.getBlockchainInformation(response => {
-      if (response.result != undefined) {
+      if (response.result !== undefined) {
         this.setState({
           headers: response.result.headers,
           blocks: response.result.blocks
@@ -40,7 +36,7 @@ export default class Bitcoin extends Component {
     })
 
     APIClient.getNetworkInfo(response => {
-      if (response.result != undefined) {
+      if (response.result !== undefined) {
         this.setState({
           btcCoreVersion: response.result.subversion,
           connectedPeers: response.result.connections,
@@ -50,7 +46,7 @@ export default class Bitcoin extends Component {
     })
 
     APIClient.getMempoolInfo(response => {
-      if (response.result != undefined) {
+      if (response.result !== undefined) {
         this.setState({
           txmempool: response.result.size,
           minrelaytxfee: response.result.minrelaytxfee
@@ -146,7 +142,6 @@ export default class Bitcoin extends Component {
           {this.renderRowWithColumn('Peer Connection', this.state.connectedPeers)}
           {this.renderRowWithColumn('Tx in Mempool', this.state.txmempool)}
           {this.renderRowWithColumn('Minimum Relay Fee', this.state.minrelaytxfee)}
-          {this.renderRowWithColumn('Public IP Address', this.state.publicIPAddress)}
           {this.renderRowWithColumn('Device ID', 'No Data')}
           {this.renderRowWithColumn('Device Version', 'No Data')}
         </React.Fragment>
@@ -167,7 +162,7 @@ export default class Bitcoin extends Component {
                       bsStyle={this.state.bitcoinDaemonButtonStyle}
                       disabled={this.state.isBitcoinDaemonStatusLoading}
                       onClick={!this.state.isBitcoinDaemonStatusLoading ? () => {
-                        if (window.confirm('Are you sure you wish to stop the Bitcoin Server?')) this.getNodeToShutDown()             
+                        if (window.confirm('Are you sure you wish to ' + this.state.bitcoinDaemonButtonText.toLowerCase() + ' the Bitcoin Server?')) this.getNodeToShutDown()             
                       } : null}
                     >
                     {this.state.bitcoinDaemonButtonText}
@@ -180,6 +175,7 @@ export default class Bitcoin extends Component {
             </Panel>
           </Grid>
         </div>
+        <Addresses />
       </div>
     )
   }
