@@ -20,6 +20,14 @@ export default class APIClient {
         return APIClient.fetchJSON('getblockchaininfo', handler)
     }
 
+    static getNetworkInfo(handler) {
+        return APIClient.fetchJSON('getnetworkinfo', handler)
+    }
+
+    static getMempoolInfo(handler) {
+        return APIClient.fetchJSON('getmempoolinfo', handler)
+    }
+
 }
 
 const clientInfo = {

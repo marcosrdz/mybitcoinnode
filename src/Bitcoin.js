@@ -1,62 +1,102 @@
 
 
 import React, { Component } from 'react'
-import { Grid, Row, Col, Panel } from 'react-bootstrap'
+import { Panel, Button } from 'react-bootstrap'
 import APIClient from './APIClient'
+import Grid from 'react-css-grid'
+const publicIP = require('public-ip')
 
 export default class Bitcoin extends Component {
 
-  getBlockchainInformation() {
+  getData() {
+    publicIP.v4().then(ip => this.setState({ publicIPAddress: ip}))
+
     APIClient.getBlockchainInformation(response => {
-      console.log(response.result)
-      this.setState({bitcoinBlockchainInformation: response.result})
+      this.setState({
+        headers: response.result.headers,
+        blocks: response.result.blocks
+      })
+    })
+
+    APIClient.getNetworkInfo(response => {
+      this.setState({
+        btcCoreVersion: response.result.subversion,
+        connectedPeers: response.result.connections,
+        relayfee: response.result.relayfee
+      })
+    })
+
+    APIClient.getMempoolInfo(response => {
+      this.setState({
+        txmempool: response.result.size,
+        minrelaytxfee: response.result.minrelaytxfee
+      })
     })
   }
 
   constructor(props) {
     super()
     this.state = {
-      bitcoinBlockchainInformation: { 
-        blocks: '', 
-        pruned: false, 
-        headers: ''
-      }
+      pruned: false, 
+      isBitcoinDaemonStatusLoading: true,
+      blocks: '', 
+      headers: '',
+      connectedPeers: '',
+      btcCoreVersion: '',
+      minrelaytxfee: '',
+      publicIPAddress: '',
+      txmempool: ''
     }
-    this.getBlockchainInformation()
+  }
+
+  componentDidMount() {
+    this.getData()
   }
 
   renderRowWithColumn(title, description = 'No Data') {
     return(
-      <Row className="show-grid">
-        <Col xs={6} md={4}>
-        <span style={{ fontWeight: 'bold'}}>{title}</span>
-        </Col>
-        <Col xs={6} md={4}>
-        {description}
-        </Col>
-      </Row>
+      <React.Fragment>
+        <Grid width={96} gap={16}>
+        <span style={{ fontWeight: 'bold', textAlign: 'left'}}>{title}</span>
+        <span style={{ fontWeight: 'normal', textAlign: 'right'}}>{description}</span>
+        </Grid>
+        <br />
+      </React.Fragment>
     )
   }
 
   render() {
     return (
-         <Panel>
-            <Panel.Heading>Bitcoin Daemon Status</Panel.Heading>
+      <div style={{ textAlign: 'center'}}>
+      <div style={{ width: '600px',   marginLeft: 'auto', marginRight: 'auto', textAlign: 'left'}}>
+      <Grid>
+        <Panel>
+            <Panel.Heading>
+            <Grid width={96} gap={16} align='center'>
+              <Panel.Title>Bitcoin Daemon Status</Panel.Title>
+              <Button
+                bsStyle="primary"
+                disabled={this.state.isBitcoinDaemonStatusLoading}
+                onClick={!this.state.isBitcoinDaemonStatusLoading ? this.handleClick : null}
+              >
+              {this.state.isBitcoinDaemonStatusLoading ? 'Loading...' : 'Loading state'}
+              </Button>
+              </Grid>
+            </Panel.Heading>
             <Panel.Body>
-            <Grid container-fluid>
-              {this.renderRowWithColumn('Bitcoin Core Version','No Data')}
-              {this.renderRowWithColumn('Node Type', this.state.bitcoinBlockchainInformation.pruned === false ? 'Full Node' : 'Pruned')}
-              {this.renderRowWithColumn('Device At Block', this.state.bitcoinBlockchainInformation.blocks)}
-              {this.renderRowWithColumn('Network Block', this.state.bitcoinBlockchainInformation.headers)}
-              {this.renderRowWithColumn('Peer Connection', 'No Data')}
-              {this.renderRowWithColumn('Tx in Mempool', 'No Data')}
-              {this.renderRowWithColumn('Minimym Relay Fee', 'No Data')}
-              {this.renderRowWithColumn('Public IP Address', 'No Data')}
-              {this.renderRowWithColumn('Device ID', 'No Data')}
-              {this.renderRowWithColumn('Device Version', 'No Data')}
-            </Grid>
-            </Panel.Body>        
-        </Panel>
+                {this.renderRowWithColumn('Bitcoin Core Version', this.state.btcCoreVersion)}
+                {this.renderRowWithColumn('Node Type', this.state.pruned === false ? 'Full Node' : 'Pruned')}
+                {this.renderRowWithColumn('Device At Block', this.state.blocks)}
+                {this.renderRowWithColumn('Network Block', this.state.headers)}
+                {this.renderRowWithColumn('Peer Connection', this.state.connectedPeers)}
+                {this.renderRowWithColumn('Tx in Mempool', this.state.txmempool)}
+                {this.renderRowWithColumn('Minimum Relay Fee', this.state.minrelaytxfee)}
+                {this.renderRowWithColumn('Public IP Address', this.state.publicIPAddress)}
+                {this.renderRowWithColumn('Device ID', 'No Data')}
+                {this.renderRowWithColumn('Device Version', 'No Data')}
+          </Panel.Body>        
+          </Panel>
+        </Grid></div></div>
     )
   }
 }
