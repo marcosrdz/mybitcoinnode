@@ -1,39 +1,48 @@
 export default class APIClient {
 
-    static fetchJSON(method, handler) {
-        fetch(clientInfo.protocol + '://' + clientInfo.host + ':' + clientInfo.port, {
-            method: 'POST',
-            body: JSON.stringify({ method: method }),
-            headers: 
-            {
-                "Content-Type": "text/plain",
-                'Authorization': 'Basic Yml0Y29pbnJwYzpiaXRzZWVk'
-            }
-        }).then((response,error) => {
-            return response.json()
-        }).then((data) => {
-            handler(data)
+    static _fetchJSON(method) {
+        return new Promise((resolve, reject) => {
+            fetch(clientInfo.protocol + '://' + clientInfo.host + ':' + clientInfo.port, {
+                method: 'POST',
+                body: JSON.stringify({ method: method }),
+                headers: 
+                {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Basic ' + Buffer.from(clientInfo.username + ':' + clientInfo.password).toString('base64')
+                }
+            })
+            .then((response) => {
+                return response.json()
+            })
+            .then((responseJSON) => {
+                console.log('SUCCESS: ' +  method)
+                resolve(responseJSON)
+            }).catch((error) => {
+                console.log('ERROR: ' +  method)
+                reject(error)
+            })
         })
     }
 
     static getBlockchainInformation(handler) {
-        return APIClient.fetchJSON('getblockchaininfo', handler)
+        return APIClient.fetchJSON('getblockchaininfo')
     }
 
     static getNetworkInfo(handler) {
-        return APIClient.fetchJSON('getnetworkinfo', handler)
+        return APIClient.fetchJSON('getnetworkinfo')
     }
 
     static getMempoolInfo(handler) {
-        return APIClient.fetchJSON('getmempoolinfo', handler)
+        return APIClient.fetchJSON('getmempoolinfo')
     }
 
-    static getPingResult(handler) {
-        return APIClient.fetchJSON('ping', handler)
+    static getPingResult() {
+        return APIClient._fetchJSON('ping')
     }
 
     static stopDaemon(handler) {
-        return APIClient.fetchJSON('stop', handler)
+        return APIClient.fetchJSON('stop')
     }
 
 }
@@ -46,5 +55,6 @@ const clientInfo = {
     port: '8332'
 }
 const responses = {
+    bitcoinServerAuthenticationProvidedInvalid: 'The provided credentials are not authorized to access this server.',
     bitcoinServerStopping: 'Bitcoin server stopping'
 }

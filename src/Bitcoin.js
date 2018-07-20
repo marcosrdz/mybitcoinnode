@@ -56,33 +56,36 @@ export default class Bitcoin extends Component {
   }
 
   getNodeStatus() {
-    APIClient.getPingResult(response => {
-      console.log(response)
-      if (response.statusCode === 502) {
+    APIClient.getPingResult().then((data) => {   
+      // if (data.statusCode === 502) {
+      //   this.setState({
+      //     isBitcoinDaemonStatusLoading: false,
+      //     bitcoinDaemonButtonStyle: 'success',
+      //     bitcoinDaemonButtonText: 'Start'
+      //   })
+      // } else if (data.result === null) {
+      if (data.error !== null && data.error.code === -28) {
+        this.setState({
+          isBitcoinDaemonStatusLoading: true,
+          bitcoinDaemonButtonStyle: 'primary',
+          bitcoinDaemonButtonText: 'Loading...'
+        })
+      } else {
+        console.log('HERE')
         this.setState({
           isBitcoinDaemonStatusLoading: false,
-          bitcoinDaemonButtonStyle: 'success',
-          bitcoinDaemonButtonText: 'Start'
+          bitcoinDaemonButtonStyle: 'danger',
+          bitcoinDaemonButtonText: 'Stop'
         })
-      } else if (response.result === null) {
-        if (response.error != null && response.error.code === -28) {
-          this.setState({
-            isBitcoinDaemonStatusLoading: true,
-            bitcoinDaemonButtonStyle: 'primary',
-            bitcoinDaemonButtonText: 'Loading...'
-          })
-        } else {
-          this.setState({
-            isBitcoinDaemonStatusLoading: false,
-            bitcoinDaemonButtonStyle: 'danger',
-            bitcoinDaemonButtonText: 'Stop'
-          })
-          this.getNetworkInformation()
-        }
-      } else {
-      
+        this.getNetworkInformation()
       }
-    }) 
+    }).catch((error) => {
+        this.setState({
+          isBitcoinDaemonStatusLoading: false,
+          bitcoinDaemonButtonStyle: 'danger',
+          bitcoinDaemonButtonText: 'Invalid Credentials'
+        })
+    })  
   }
 
   constructor(props) {
@@ -131,6 +134,12 @@ export default class Bitcoin extends Component {
         Bitcoin Core Server is not running.
       </React.Fragment>
       )
+    } else if (!this.state.isBitcoinDaemonStatusLoading && this.state.bitcoinDaemonButtonStyle === 'danger') {
+      return (
+        <React.Fragment>
+        The provided credentials are not authorized to access this server.
+      </React.Fragment>
+      )
     } 
     else {
       return(
@@ -161,7 +170,7 @@ export default class Bitcoin extends Component {
                     <Button
                       bsStyle={this.state.bitcoinDaemonButtonStyle}
                       disabled={this.state.isBitcoinDaemonStatusLoading}
-                      onClick={!this.state.isBitcoinDaemonStatusLoading ? () => {
+                      onClick={!this.state.isBitcoinDaemonStatusLoading && this.state.bitcoinDaemonButtonStyle !== 'danger' ? () => {
                         if (window.confirm('Are you sure you wish to ' + this.state.bitcoinDaemonButtonText.toLowerCase() + ' the Bitcoin Server?')) this.getNodeToShutDown()             
                       } : null}
                     >
@@ -175,7 +184,7 @@ export default class Bitcoin extends Component {
             </Panel>
           </Grid>
         </div>
-        <Addresses />
+        { !this.state.isBitcoinDaemonStatusLoading && this.state.bitcoinDaemonButtonStyle === 'success' && <Addresses /> }
       </div>
     )
   }
