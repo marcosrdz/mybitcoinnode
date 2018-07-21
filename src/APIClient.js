@@ -16,10 +16,31 @@ export default class APIClient {
                 return response.json()
             })
             .then((responseJSON) => {
-                console.log('SUCCESS: ' +  method)
-                resolve(responseJSON)
+                if (responseJSON.statusCode !== undefined) {
+                    console.log('SUCCESS WITH STATUS CODE: ' +  method)
+                    reject(responseJSON)
+                } else {
+                    console.log('SUCCESS: ' +  method)
+                    resolve(responseJSON)
+                }
             }).catch((error) => {
                 console.log('ERROR: ' +  method)
+                reject(error)
+            })
+        })
+    }
+
+    static getBitseedDeviceData() {
+        return new Promise((resolve, reject) => {
+            fetch('./serial', {
+                method: 'GET',
+            })
+            .then((response) => {
+                return response.json()
+            })
+            .then((responseJSON) => {
+                resolve(responseJSON)
+            }).catch((error) => {
                 reject(error)
             })
         })
