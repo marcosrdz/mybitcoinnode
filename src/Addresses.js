@@ -9,45 +9,43 @@ export default class Addresses extends Component {
 
   getNetworkInformation() {
     this.setState({ isNetworkInfoLoading: true, refreshNetworkInfoButtonStyle: 'primary'})
-    APIClient.getNetworkInfo(response => {
-        if (response.result !== undefined) {
-            if (response.result.networks !== undefined) {        
-                for (const network of response.result.networks) {
-                    if (network.name === 'ipv4') {
-                        let publicIPv4Address = this.state.publicIPv4Address
-                        publicIPv4Address.isReachable = network.reachable
-                        this.setState({ publicIPv4Address: publicIPv4Address})
-                    } else if (network.name === 'ipv6') {
-                        let publicIPv6Address = this.state.publicIPv6Address
-                        publicIPv6Address.isReachable = network.reachable
-                        this.setState({ publicIPv6Address: publicIPv6Address})
-                    } else if (network.name === 'onion') {
-                        let publicOnionAddress = this.state.publicOnionAddress
-                        publicOnionAddress.isReachable = network.reachable
-                        this.setState({ publicOnionAddress: publicOnionAddress})
-                    }
+    APIClient.getNetworkInfo().then((response) => {
+        if (response.result.networks !== undefined) {        
+            for (const network of response.result.networks) {
+                if (network.name === 'ipv4') {
+                    let publicIPv4Address = this.state.publicIPv4Address
+                    publicIPv4Address.isReachable = network.reachable
+                    this.setState({ publicIPv4Address: publicIPv4Address})
+                } else if (network.name === 'ipv6') {
+                    let publicIPv6Address = this.state.publicIPv6Address
+                    publicIPv6Address.isReachable = network.reachable
+                    this.setState({ publicIPv6Address: publicIPv6Address})
+                } else if (network.name === 'onion') {
+                    let publicOnionAddress = this.state.publicOnionAddress
+                    publicOnionAddress.isReachable = network.reachable
+                    this.setState({ publicOnionAddress: publicOnionAddress})
                 }
             }
-            if (response.result.localaddresses !== undefined) {
-                for (const [i, value] of response.result.localaddresses.entries()) {
-                    if (i === 0) {
-                        let publicIPv4Address = this.state.publicIPv4Address
-                        publicIPv4Address.address = value.address + ':' + value.port
-                        this.setState({ publicIPv4Address: publicIPv4Address})
-                    } else if (i === 1) {
-                        let publicIPv6Address = this.state.publicIPv6Address
-                        publicIPv6Address.address = value.address + ':' + value.port
-                        this.setState({ publicIPv6Address: publicIPv6Address})
-                    } else if (i === 2) {
-                        console.log(value)
-                        let publicOnionAddress = this.state.publicOnionAddress
-                        publicOnionAddress.address = value.address + ':' + value.port
-                        this.setState({ publicOnionAddress: publicOnionAddress})
-                    }
-                }
-            }
-            this.setState({ isNetworkInfoLoading: false, refreshNetworkInfoButtonStyle: 'success'})
         }
+        if (response.result.localaddresses !== undefined) {
+            for (const [i, value] of response.result.localaddresses.entries()) {
+                if (i === 0) {
+                    let publicIPv4Address = this.state.publicIPv4Address
+                    publicIPv4Address.address = value.address + ':' + value.port
+                    this.setState({ publicIPv4Address: publicIPv4Address})
+                } else if (i === 1) {
+                    let publicIPv6Address = this.state.publicIPv6Address
+                    publicIPv6Address.address = value.address + ':' + value.port
+                    this.setState({ publicIPv6Address: publicIPv6Address})
+                } else if (i === 2) {
+                    console.log(value)
+                    let publicOnionAddress = this.state.publicOnionAddress
+                    publicOnionAddress.address = value.address + ':' + value.port
+                    this.setState({ publicOnionAddress: publicOnionAddress})
+                }
+            }
+        }
+        this.setState({ isNetworkInfoLoading: false, refreshNetworkInfoButtonStyle: 'success'})
     })
   }
 
@@ -76,10 +74,6 @@ export default class Addresses extends Component {
         <br />
       </React.Fragment>
     )
-  }
-
-  renderLoadingIndicatorOrData() {
-    
   }
 
   render() {

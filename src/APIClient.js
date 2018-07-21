@@ -26,15 +26,15 @@ export default class APIClient {
     }
 
     static getBlockchainInformation(handler) {
-        return APIClient.fetchJSON('getblockchaininfo')
+        return APIClient._fetchJSON('getblockchaininfo')
     }
 
     static getNetworkInfo(handler) {
-        return APIClient.fetchJSON('getnetworkinfo')
+        return APIClient._fetchJSON('getnetworkinfo')
     }
 
     static getMempoolInfo(handler) {
-        return APIClient.fetchJSON('getmempoolinfo')
+        return APIClient._fetchJSON('getmempoolinfo')
     }
 
     static getPingResult() {
@@ -42,7 +42,7 @@ export default class APIClient {
     }
 
     static stopDaemon(handler) {
-        return APIClient.fetchJSON('stop')
+        return APIClient._fetchJSON('stop')
     }
 
 }

@@ -14,7 +14,7 @@ export default class Bitcoin extends Component {
       bitcoinDaemonButtonStyle: 'primary',
       bitcoinDaemonButtonText: 'Stopping...'
     }, () => {
-      APIClient.stopDaemon(response => {
+      APIClient.stopDaemon().then((response) => {
         if (response.result === APIClient.responses) {
           this.setState({
             isBitcoinDaemonStatusLoading: false,
@@ -26,32 +26,22 @@ export default class Bitcoin extends Component {
   }
 
   getNetworkInformation() {
-    APIClient.getBlockchainInformation(response => {
-      if (response.result !== undefined) {
-        this.setState({
-          headers: response.result.headers,
-          blocks: response.result.blocks
-        })
-      }
-    })
+    const promises = [
+      APIClient.getBlockchainInformation(), 
+      APIClient.getNetworkInfo(), 
+      APIClient.getMempoolInfo()
+    ]
 
-    APIClient.getNetworkInfo(response => {
-      if (response.result !== undefined) {
-        this.setState({
-          btcCoreVersion: response.result.subversion,
-          connectedPeers: response.result.connections,
-          relayfee: response.result.relayfee
-        })
-      }
-    })
-
-    APIClient.getMempoolInfo(response => {
-      if (response.result !== undefined) {
-        this.setState({
-          txmempool: response.result.size,
-          minrelaytxfee: response.result.minrelaytxfee
-        })
-      }
+    Promise.all(promises).then((data) => {
+      this.setState({
+        headers: data[0].result.headers,
+        blocks: data[0].result.blocks,
+        btcCoreVersion: data[1].result.subversion,
+        connectedPeers: data[1].result.connections,
+        relayfee: data[1].result.relayfee,
+        txmempool: data[2].result.size,
+        minrelaytxfee: data[2].result.minrelaytxfee
+      })
     })
   }
 
@@ -64,6 +54,7 @@ export default class Bitcoin extends Component {
       //     bitcoinDaemonButtonText: 'Start'
       //   })
       // } else if (data.result === null) {
+
       if (data.error !== null && data.error.code === -28) {
         this.setState({
           isBitcoinDaemonStatusLoading: true,
@@ -71,18 +62,16 @@ export default class Bitcoin extends Component {
           bitcoinDaemonButtonText: 'Loading...'
         })
       } else {
-        console.log('HERE')
         this.setState({
           isBitcoinDaemonStatusLoading: false,
           bitcoinDaemonButtonStyle: 'danger',
           bitcoinDaemonButtonText: 'Stop'
-        })
-        this.getNetworkInformation()
+        }, () => this.getNetworkInformation())
       }
     }).catch((error) => {
         this.setState({
           isBitcoinDaemonStatusLoading: false,
-          bitcoinDaemonButtonStyle: 'danger',
+          bitcoinDaemonButtonStyle: 'info',
           bitcoinDaemonButtonText: 'Invalid Credentials'
         })
     })  
@@ -134,14 +123,13 @@ export default class Bitcoin extends Component {
         Bitcoin Core Server is not running.
       </React.Fragment>
       )
-    } else if (!this.state.isBitcoinDaemonStatusLoading && this.state.bitcoinDaemonButtonStyle === 'danger') {
+    } else if (!this.state.isBitcoinDaemonStatusLoading && this.state.bitcoinDaemonButtonStyle === 'info') {
       return (
         <React.Fragment>
         The provided credentials are not authorized to access this server.
       </React.Fragment>
       )
-    } 
-    else {
+    } else {
       return(
         <React.Fragment>
           {this.renderRowWithColumn('Bitcoin Core Version', this.state.btcCoreVersion)}
@@ -170,7 +158,7 @@ export default class Bitcoin extends Component {
                     <Button
                       bsStyle={this.state.bitcoinDaemonButtonStyle}
                       disabled={this.state.isBitcoinDaemonStatusLoading}
-                      onClick={!this.state.isBitcoinDaemonStatusLoading && this.state.bitcoinDaemonButtonStyle !== 'danger' ? () => {
+                      onClick={!this.state.isBitcoinDaemonStatusLoading && this.state.bitcoinDaemonButtonStyle !== 'info' ? () => {
                         if (window.confirm('Are you sure you wish to ' + this.state.bitcoinDaemonButtonText.toLowerCase() + ' the Bitcoin Server?')) this.getNodeToShutDown()             
                       } : null}
                     >
@@ -184,7 +172,7 @@ export default class Bitcoin extends Component {
             </Panel>
           </Grid>
         </div>
-        { !this.state.isBitcoinDaemonStatusLoading && this.state.bitcoinDaemonButtonStyle === 'success' && <Addresses /> }
+        { !this.state.isBitcoinDaemonStatusLoading && this.state.bitcoinDaemonButtonStyle === 'danger' && <Addresses /> }
       </div>
     )
   }
