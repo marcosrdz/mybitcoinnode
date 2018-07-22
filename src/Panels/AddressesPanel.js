@@ -2,10 +2,10 @@
 
 import React, { Component } from 'react'
 import { Panel, Button } from 'react-bootstrap'
-import APIClient from './APIClient'
+import APIClient from '../APIClient'
 import Grid from 'react-css-grid'
 
-export default class Addresses extends Component {
+export default class AddressesPanel extends Component {
 
   getNetworkInformation() {
     this.setState({ isNetworkInfoLoading: true, refreshNetworkInfoButtonStyle: 'primary'})
