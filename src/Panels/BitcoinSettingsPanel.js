@@ -144,25 +144,25 @@ export default class BitcoinSettingsPanel extends Component {
               <Panel.Body>
                 <Form horizontal>
                   <FormGroup controlId="formHorizontalEmail">
-                    <Col componentClass={ControlLabel} sm={2}>
+                    <Col componentClass={ControlLabel} sm={3}>
                       RPC Username
                     </Col>
-                    <Col sm={10}>
+                    <Col sm={9}>
                       <FormControl type="email" placeholder="bitcoinrpc" />
                     </Col>
                   </FormGroup>
 
                   <FormGroup controlId="formHorizontalPassword">
-                    <Col componentClass={ControlLabel} sm={2}>
+                    <Col componentClass={ControlLabel} sm={3}>
                     RPC Password
                     </Col>
-                    <Col sm={10}>
+                    <Col sm={9}>
                       <FormControl type="password" placeholder="bitseed" />
                     </Col>
                   </FormGroup>
 
                   <FormGroup>
-                    <Col smOffset={2} sm={10}>
+                    <Col smOffset={3} sm={8}>
                       <Button type="submit">Sign in</Button>
                     </Col>
                   </FormGroup>
