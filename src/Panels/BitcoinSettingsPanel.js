@@ -163,7 +163,7 @@ export default class BitcoinSettingsPanel extends Component {
 
                   <FormGroup>
                     <Col smOffset={3} sm={8}>
-                      <Button type="submit">Sign in</Button>
+                      <Button type="submit">Save</Button>
                     </Col>
                   </FormGroup>
                 </Form>
