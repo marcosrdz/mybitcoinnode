@@ -80,7 +80,7 @@ export default class BitcoinPanel extends Component {
           isBitcoinDaemonStatusLoading: false,
           bitcoinDaemonButtonStyle: 'success',
           bitcoinDaemonButtonText: 'Start',
-          bitcoinDaemonDescriptionText: 'Bitcoin Core Server is not running'
+          bitcoinDaemonDescriptionText: 'Bitcoin Core RPC Server is not reachable.'
         })
       } else {
         this.setState({
