@@ -1,31 +1,35 @@
 export default class APIClient {
 
     static _fetchJSON(method) {
-        return new Promise((resolve, reject) => {
-            fetch(clientInfo.protocol + '://' + clientInfo.host + ':' + clientInfo.port, {
-                method: 'POST',
-                body: JSON.stringify({ method: method }),
-                headers: 
-                {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Basic ' + Buffer.from(clientInfo.username + ':' + clientInfo.password).toString('base64')
-                }
-            })
-            .then((response) => {
-                return response.json()
-            })
-            .then((responseJSON) => {
-                if (responseJSON.statusCode !== undefined) {
-                    console.log('SUCCESS WITH STATUS CODE: ' +  method)
-                    reject(responseJSON)
-                } else {
-                    console.log('SUCCESS: ' +  method)
-                    resolve(responseJSON)
-                }
-            }).catch((error) => {
-                console.log('ERROR: ' +  method)
-                reject(error)
+        return Promise.all([fetchConfigurationFile()]).then((results) => { 
+            const clientInfo = results[0]
+            console.log(clientInfo)
+            return new Promise((resolve, reject) => {
+                fetch(clientInfo.protocol + '://' + clientInfo.host + ':' + clientInfo.port, {
+                    method: 'POST',
+                    body: JSON.stringify({ method: method }),
+                    headers: 
+                    {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Basic ' + Buffer.from(clientInfo.username + ':' + clientInfo.password).toString('base64')
+                    }
+                })
+                .then((response) => {
+                    return response.json()
+                })
+                .then((responseJSON) => {
+                    if (responseJSON.statusCode !== undefined) {
+                        console.log('SUCCESS WITH STATUS CODE: ' +  method)
+                        reject(responseJSON)
+                    } else {
+                        console.log('SUCCESS: ' +  method)
+                        resolve(responseJSON)
+                    }
+                }).catch((error) => {
+                    console.log('ERROR: ' +  method)
+                    reject(error)
+                })
             })
         })
     }
@@ -46,15 +50,16 @@ export default class APIClient {
         })
     }
 
-    static getBlockchainInformation(handler) {
+    static getBlockchainInformation() {
         return APIClient._fetchJSON('getblockchaininfo')
     }
 
-    static getNetworkInfo(handler) {
+    static getNetworkInfo() {
+        APIClient._fetchJSON('getnetworkinfo').then((data) => console.log(data))
         return APIClient._fetchJSON('getnetworkinfo')
     }
 
-    static getMempoolInfo(handler) {
+    static getMempoolInfo() {
         return APIClient._fetchJSON('getmempoolinfo')
     }
 
@@ -62,20 +67,19 @@ export default class APIClient {
         return APIClient._fetchJSON('ping')
     }
 
-    static stopDaemon(handler) {
+    static stopDaemon() {
         return APIClient._fetchJSON('stop')
     }
 
 }
 
-const clientInfo = {
-    protocol: 'http',
-    host: 'localhost:1337/192.168.1.10',
-    username: 'bitcoinrpc',
-    password: 'bitseed',
-    port: '8332'
-}
 const responses = {
     bitcoinServerAuthenticationProvidedInvalid: 'The provided credentials are not authorized to access this server.',
     bitcoinServerStopping: 'Bitcoin server stopping'
+}
+
+async function fetchConfigurationFile() {
+    const response = await fetch('http://localhost:1337/localhost:8080/configuration')
+    const responseJSON = await response.json() 
+    return responseJSON
 }

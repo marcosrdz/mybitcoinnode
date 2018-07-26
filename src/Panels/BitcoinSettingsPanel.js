@@ -1,7 +1,7 @@
 
 
 import React, { Component } from 'react'
-import { Panel, Button, ControlLabel, FormGroup, FormControl, Form, Col } from 'react-bootstrap'
+import { Panel, Button, ControlLabel, FormGroup, FormControl, Form, Col, DropdownButton, MenuItem } from 'react-bootstrap'
 import APIClient from '../APIClient'
 import Grid from 'react-css-grid'
 
@@ -143,7 +143,20 @@ export default class BitcoinSettingsPanel extends Component {
               </Panel.Heading>
               <Panel.Body>
                 <Form horizontal>
-                  <FormGroup controlId="formHorizontalEmail">
+                <FormGroup controlId="fromRPCProtocol">
+                    <Col componentClass={ControlLabel} sm={3}>
+                      RPC Protocol
+                    </Col>
+                    <Col sm={9}>
+                    <DropdownButton
+                      key={1}
+                    >
+                      <MenuItem key="1">http</MenuItem>
+                    </DropdownButton>
+                    </Col>
+                  </FormGroup>
+
+                  <FormGroup controlId="fromRPCUser">
                     <Col componentClass={ControlLabel} sm={3}>
                       RPC Username
                     </Col>
@@ -152,7 +165,7 @@ export default class BitcoinSettingsPanel extends Component {
                     </Col>
                   </FormGroup>
 
-                  <FormGroup controlId="formHorizontalPassword">
+                  <FormGroup controlId="fromRPCPassword">
                     <Col componentClass={ControlLabel} sm={3}>
                     RPC Password
                     </Col>

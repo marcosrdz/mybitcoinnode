@@ -1,1 +1,7 @@
-{"rpcusername":"bitcoinrpc","rpcpassword":"dfdf"}
+{
+    "protocol": "http",
+    "host": "localhost:1337/192.168.1.10",
+    "username": "bitcoinrpc",
+    "password": "bitseed",
+    "port": "8332"
+}
