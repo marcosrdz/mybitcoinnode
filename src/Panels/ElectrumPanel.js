@@ -31,7 +31,6 @@ export default class ElectrumPanel extends Component {
 
   componentDidMount() {
    // this.interval = setInterval(() => this.getNetworkInformation(), 1000)
-    this.getNodeStatus()
   }
 
   render() {
