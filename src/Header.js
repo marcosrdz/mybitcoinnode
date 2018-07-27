@@ -26,6 +26,11 @@ class Header extends Component {
                     Electrum
                     </NavItem>
                 </LinkContainer>
+                <LinkContainer to="/explorer">        
+                    <NavItem eventKey={2}>
+                    Explorer
+                    </NavItem>
+                </LinkContainer>
             </Nav>
             <Nav pullRight>
                 <LinkContainer to="/settings">        
