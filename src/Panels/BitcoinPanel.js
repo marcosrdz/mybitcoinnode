@@ -7,22 +7,54 @@ import Grid from 'react-css-grid'
 
 export default class BitcoinPanel extends Component {
 
+  state = {
+    panelConfiguration: {
+      panelBodyPendingText: '',
+      panelBodyPendingTextHidden: false,
+      panelHeaderButton: {
+        panelHeaderButtonButtonStyle: 'primary',
+        panelHeaderButtonText: 'Loading...',
+        panelHeaderButtonDisabled: true,
+        panelHeaderButtonHidden: true,
+        panelHeaderButtonOnPress: () => {}
+      }
+    },
+    pruned: false, 
+    isBitcoinDaemonStatusLoading: true,
+    deviceID: '',
+    blocks: '', 
+    headers: '',
+    connectedPeers: '',
+    btcCoreVersion: '',
+    minrelaytxfee: '',
+    publicIPAddress: '',
+    txmempool: ''
+  }
+
   getNodeToShutDown() {
-    this.setState({
-      isBitcoinDaemonStatusLoading: true,
-      bitcoinDaemonButtonStyle: 'primary',
-      bitcoinDaemonButtonText: 'Stopping...',
-      bitcoinDaemonDescriptionText: 'Bitcoin Core Server is'
-    }, () => {
-      APIClient.stopDaemon().then((response) => {
-        if (response.result === APIClient.responses) {
-          this.setState({
-            isBitcoinDaemonStatusLoading: false,
-            bitcoinDaemonButtonStyle: 'success'
-          })
+    this.setState(
+      {
+        panelConfiguration: {
+          panelBodyPendingText: 'Shutting down Bitcoin Server...',
+          panelBodyPendingTextHidden: false,
+          panelHeaderButton: {
+            panelHeaderButtonHidden: true
+          }
         }
-      })
-    })
+    }, () => {
+        APIClient.stopDaemon().then((response) => {
+          this.setState({
+            panelConfiguration: {
+              panelBodyPendingText: 'Bitcoin Server RPC is not reachable.',
+              panelBodyPendingTextHidden: false,
+              panelHeaderButton: {
+                panelHeaderButtonHidden: true
+              }
+            }
+          })
+        })
+      }
+    )
   }
 
   getNetworkInformation() {
@@ -54,63 +86,65 @@ export default class BitcoinPanel extends Component {
     APIClient.getPingResult().then((data) => {   
       if (data.error !== null && data.error.code === -28) {
         this.setState({
-          isBitcoinDaemonStatusLoading: true,
-          bitcoinDaemonButtonStyle: 'primary',
-          bitcoinDaemonButtonText: 'Loading...'
+          panelConfiguration : {
+            panelBodyPendingText: 'Shutting down Bitcoin Server...',
+            panelBodyPendingTextHidden: false,
+            panelHeaderButton: {
+              panelHeaderButtonHidden: true
+            }
+          }
         })
       } else {
         this.setState({
-          isBitcoinDaemonStatusLoading: false,
-          bitcoinDaemonButtonStyle: 'danger',
-          bitcoinDaemonButtonText: 'Stop',
-          bitcoinDaemonDescriptionText: undefined
+          panelConfiguration : {
+            panelBodyPendingTextHidden: true,
+            panelHeaderButton: {
+              panelHeaderButtonButtonStyle: 'danger',
+              panelHeaderButtonHidden: false,
+              panelHeaderButtonText: 'Stop',
+              panelHeaderButtonOnPress: () => { 
+                if (window.confirm('Are you sure you wish to shut down your Bitcoin Server?')) this.getNodeToShutDown()             
+              }
+            }
+          }
         }, () => this.getNetworkInformation())
       }
     }).catch((error) => {
       if (error.name === 'TypeError') {
         this.setState({
-          isBitcoinDaemonStatusLoading: false,
-          bitcoinDaemonButtonStyle: 'info',
-          bitcoinDaemonButtonText: 'Invalid host',
-          bitcoinDaemonDescriptionText: 'The provided host name is not reachable.'
+          panelConfiguration : {
+            panelBodyPendingText: 'The provided host name is not reachable.',
+            panelBodyPendingTextHidden: false,
+            panelHeaderButton: {
+              panelHeaderButtonHidden: true,
+            }
+          }
         })
       }
       else if (error.statusCode === 502) {
         this.setState({
-          isBitcoinDaemonStatusLoading: false,
-          bitcoinDaemonButtonStyle: 'success',
-          bitcoinDaemonButtonText: 'Start',
-          bitcoinDaemonDescriptionText: 'Bitcoin Core RPC Server is not reachable.'
+          panelConfiguration : {
+            panelBodyPendingText: 'Bitcoin Core RPC Server is not reachable.',
+            panelBodyPendingTextHidden: false,
+            panelHeaderButton: {
+              panelHeaderButtonHidden: true,
+            }
+          }
         })
       } else {
         this.setState({
-          isBitcoinDaemonStatusLoading: false,
-          bitcoinDaemonButtonStyle: 'info',
-          bitcoinDaemonButtonText: 'Invalid Credentials',
-          bitcoinDaemonDescriptionText: 'The provided credentials are not authorized to access this server.'
+          panelConfiguration : {
+            panelBodyPendingText: 'The provided credentials are not authorized to access this server. Please, go to settings and double check your credentials.',
+            panelBodyPendingTextHidden: false,
+            panelHeaderButton: {
+              panelHeaderButtonHidden: true          
+            }
+          }
         })
       }
     })  
   }
 
-  constructor(props) {
-    super()
-    this.state = {
-      pruned: false, 
-      isBitcoinDaemonStatusLoading: true,
-      deviceID: '',
-      blocks: '', 
-      headers: '',
-      connectedPeers: '',
-      btcCoreVersion: '',
-      minrelaytxfee: '',
-      publicIPAddress: '',
-      txmempool: '',
-      bitcoinDaemonButtonStyle: 'primary',
-      bitcoinDaemonButtonText: 'Loading...',
-      bitcoinDaemonDescriptionText: 'Bitcoin Core Server is'
-    }
-  }
   componentWillUnmount() {
     clearInterval(this.interval)
   }
@@ -133,16 +167,12 @@ export default class BitcoinPanel extends Component {
   }
 
   renderLoadingIndicatorOrData() {
-    if (this.state.isBitcoinDaemonStatusLoading) {
+    const panelConfiguration = this.state.panelConfiguration
+
+    if (!panelConfiguration.panelBodyPendingTextHidden) {
       return(
         <React.Fragment>
-          {this.state.bitcoinDaemonDescriptionText} {this.state.bitcoinDaemonButtonText.toLowerCase()}...
-        </React.Fragment>
-      )
-    } else if (this.state.bitcoinDaemonDescriptionText !== undefined) {
-      return (
-        <React.Fragment>
-          {this.state.bitcoinDaemonDescriptionText}
+          {panelConfiguration.panelBodyPendingText}
         </React.Fragment>
       )
     } else {
@@ -163,6 +193,19 @@ export default class BitcoinPanel extends Component {
   }
 
   render() {
+    /*
+    panelConfiguration: {
+      panelBodyPendingText: String,
+      panelBodyPendingTextHidden: Bool,
+      panelHeaderButton: {
+        panelHeaderButtonButtonStyle: String,
+        panelHeaderButtonText: String,
+        panelHeaderButtonDisabled: Boolean,
+        panelHeaderButtonHidden: Boolean,
+      }
+    }
+    */
+    const panelConfiguration = this.state.panelConfiguration
     return (
       <div style={{ textAlign: 'center'}}>
         <div style={{ width: '600px',   marginLeft: 'auto', marginRight: 'auto', textAlign: 'left'}}>
@@ -171,15 +214,15 @@ export default class BitcoinPanel extends Component {
               <Panel.Heading>
               <Grid width={96} gap={240} align='center'>
                   <Panel.Title>Bitcoin Daemon Status</Panel.Title>
+                  { (!panelConfiguration.panelHeaderButton.panelHeaderButtonHidden) &&
                     <Button
-                      bsStyle={this.state.bitcoinDaemonButtonStyle}
-                      disabled={this.state.isBitcoinDaemonStatusLoading}
-                      onClick={!this.state.isBitcoinDaemonStatusLoading && this.state.bitcoinDaemonButtonStyle !== 'info' ? () => {
-                        if (window.confirm('Are you sure you wish to ' + this.state.bitcoinDaemonButtonText.toLowerCase() + ' the Bitcoin Server?')) this.getNodeToShutDown()             
-                      } : null}
+                      bsStyle={panelConfiguration.panelHeaderButton.panelHeaderButtonButtonStyle}
+                      disabled={panelConfiguration.panelHeaderButton.panelHeaderButtonDisabled}
+                      onClick={panelConfiguration.panelHeaderButton.panelHeaderButtonOnPress}
                     >
-                    {this.state.bitcoinDaemonButtonText}
+                    {panelConfiguration.panelHeaderButton.panelHeaderButtonText}
                     </Button>
+                  }
                 </Grid>
               </Panel.Heading>
               <Panel.Body>

@@ -2,6 +2,6 @@
     "protocol": "http",
     "host": "localhost:1337/192.168.1.10",
     "username": "bitcoinrpc",
-    "password": "bitseed",
+    "password": "biteed",
     "port": "8332"
 }
