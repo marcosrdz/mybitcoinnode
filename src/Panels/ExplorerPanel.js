@@ -46,7 +46,7 @@ export default class ExplorerPanel extends Component {
                 </Grid>
               </Panel.Heading>
               <Panel.Body>
-                Under construction...
+              Coming soon...
             </Panel.Body>        
             </Panel>
           </Grid>
