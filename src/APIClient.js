@@ -1,35 +1,35 @@
+import config from './config'
+
 export default class APIClient {
 
     static _fetchJSON(method) {
-        return Promise.all([fetchConfigurationFile()]).then((results) => { 
-            const clientInfo = results[0]
-            console.log(clientInfo)
-            return new Promise((resolve, reject) => {
-                fetch(clientInfo.protocol + '://' + clientInfo.host + ':' + clientInfo.port, {
-                    method: 'POST',
-                    body: JSON.stringify({ method: method }),
-                    headers: 
-                    {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Basic ' + Buffer.from(clientInfo.username + ':' + clientInfo.password).toString('base64')
-                    }
-                })
-                .then((response) => {
-                    return response.json()
-                })
-                .then((responseJSON) => {
-                    if (responseJSON.statusCode !== undefined) {
-                        console.log('SUCCESS WITH STATUS CODE: ' +  method)
-                        reject(responseJSON)
-                    } else {
-                        console.log('SUCCESS: ' +  method)
-                        resolve(responseJSON)
-                    }
-                }).catch((error) => {
-                    console.log('ERROR: ' +  method)
-                    reject(error)
-                })
+        const clientInfo = config
+        console.log(clientInfo)
+        return new Promise((resolve, reject) => {
+            fetch(clientInfo.protocol + '://' + clientInfo.host + ':' + clientInfo.port, {
+                method: 'POST',
+                body: JSON.stringify({ method: method }),
+                headers: 
+                {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Basic ' + Buffer.from(clientInfo.username + ':' + clientInfo.password).toString('base64')
+                }
+            })
+            .then((response) => {
+                return response.json()
+            })
+            .then((responseJSON) => {
+                if (responseJSON.statusCode !== undefined) {
+                    console.log('SUCCESS WITH STATUS CODE: ' +  method)
+                    reject(responseJSON)
+                } else {
+                    console.log('SUCCESS: ' +  method)
+                    resolve(responseJSON)
+                }
+            }).catch((error) => {
+                console.log('ERROR: ' +  method)
+                reject(error)
             })
         })
     }
@@ -76,10 +76,4 @@ export default class APIClient {
 const responses = {
     bitcoinServerAuthenticationProvidedInvalid: 'The provided credentials are not authorized to access this server.',
     bitcoinServerStopping: 'Bitcoin server stopping'
-}
-
-async function fetchConfigurationFile() {
-    const response = await fetch('http://localhost:1337/localhost:8080/configuration')
-    const responseJSON = await response.json() 
-    return responseJSON
 }

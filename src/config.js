@@ -1,3 +1,4 @@
+const config =
 {
     "protocol": "http",
     "host": "localhost",
@@ -5,3 +6,5 @@
     "password": "bitseed",
     "port": "8332"
 }
+
+export default config
