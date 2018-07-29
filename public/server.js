@@ -1,6 +1,8 @@
 const http = require('http')
 const fs = require('fs')
 
+console.log('Bitseed Web UI server is now running. Waiting for requests...')
+
 http.createServer((request, response) => {
     response.setHeader('Access-Control-Allow-Origin', '*')
     response.setHeader('Access-Control-Allow-Methods', 'GET, POST')
@@ -47,6 +49,10 @@ http.createServer((request, response) => {
                 console.log(`${request.method} Request: ${request.url} : ${data.toString()}`)
                 response.end(data)
             }) 
+        } else if (request.url === '/status') {
+            response.setHeader('Content-Type', 'application/json')
+            response.statusCode = 200
+            response.end(JSON.stringify({ status: 'ok'}))
         }
     } else {
         response.statusCode = 501

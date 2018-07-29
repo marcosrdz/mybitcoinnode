@@ -33,6 +33,22 @@ export default class APIClient {
         })
     }
 
+    static getBitseedWebUIServerStatus() {
+        return new Promise((resolve, reject) => {
+            fetch('http://localhost:3001/status', {
+                method: 'GET',
+            })
+            .then((response) => {
+                return response.json()
+            })
+            .then((responseJSON) => {
+                resolve(responseJSON)
+            }).catch((error) => {
+                reject(error)
+            })
+        })
+    }
+
     static getBitseedDeviceData() {
         return new Promise((resolve, reject) => {
             fetch('http://localhost:3001/serial', {
