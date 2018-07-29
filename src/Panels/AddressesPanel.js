@@ -24,13 +24,7 @@ export default class AddressesPanel extends Component {
         publicOnionAddress: { address: '', isReachable: false},
     }
 
-    getNodeStatus() {
-        APIClient.getBitseedDeviceData().then((serial) => {
-          this.setState({ deviceID: serial })
-        }).catch((error) => {
-          this.setState({ deviceID: 'No data' })
-        })
-    
+    getNodeStatus() {    
         APIClient.getPingResult().then((data) => {   
           if (data.error !== null && data.error.code === -28) {
             this.setState({

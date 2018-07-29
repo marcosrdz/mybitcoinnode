@@ -2,6 +2,8 @@
   "name": "bitseed-webui3",
   "version": "0.1.0",
   "private": true,
+  "author": "marcospr@pm.me",
+  "licemse": "MIT",
   "dependencies": {
     "react": "^16.4.1",
     "react-css-grid": "^2.0.0-0",

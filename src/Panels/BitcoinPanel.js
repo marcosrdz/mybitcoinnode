@@ -77,10 +77,10 @@ export default class BitcoinPanel extends Component {
   }
 
   getNodeStatus() {
-    APIClient.getBitseedDeviceData().then((serial) => {
-      this.setState({ deviceID: serial })
+    APIClient.getBitseedDeviceData().then((response) => {
+      this.setState({ deviceID: response })
     }).catch((error) => {
-      this.setState({ deviceID: 'No data' })
+      this.setState({ deviceID: 'No Data' })
     })
 
     APIClient.getPingResult().then((data) => {   
@@ -110,6 +110,7 @@ export default class BitcoinPanel extends Component {
         }, () => this.getNetworkInformation())
       }
     }).catch((error) => {
+      console.log(error)
       if (error.name === 'TypeError') {
         this.setState({
           panelConfiguration : {
