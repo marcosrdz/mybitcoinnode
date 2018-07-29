@@ -6,6 +6,7 @@ import AlertServerNotRunning from './Common/AlertServerNotRunning'
 import Bitcoin from './Bitcoin'
 import Electrum from './Electrum'
 import Explorer from './Explorer'
+import Device from './Device'
 import Settings from './Settings'
 
 class App extends Component {
@@ -35,6 +36,7 @@ class App extends Component {
         <Route exact path='/bitcoin' component={Bitcoin} />
         <Route exact path='/electrum' component={Electrum} />
         <Route exact path='/explorer' component={Explorer} />
+        <Route exact path='/device' component={Device} />
         <Route exact path='/settings' component={Settings} />
           </Switch>
         </React.Fragment>

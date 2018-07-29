@@ -27,14 +27,19 @@ class Header extends Component {
                     </NavItem>
                 </LinkContainer>
                 <LinkContainer to="/explorer">        
-                    <NavItem eventKey={2}>
+                    <NavItem eventKey={3}>
                     Explorer
                     </NavItem>
                 </LinkContainer>
             </Nav>
             <Nav pullRight>
+            <LinkContainer to="/device">
+                    <NavItem eventKey={4}>
+                    Device
+                    </NavItem>
+                </LinkContainer>
                 <LinkContainer to="/settings">        
-                    <NavItem eventKey={3}>
+                    <NavItem eventKey={5}>
                         Settings
                     </NavItem>
                 </LinkContainer>
