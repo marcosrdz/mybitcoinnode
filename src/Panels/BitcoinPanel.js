@@ -21,7 +21,6 @@ export default class BitcoinPanel extends Component {
     },
     pruned: false, 
     isBitcoinDaemonStatusLoading: true,
-    deviceID: '',
     blocks: '', 
     headers: '',
     connectedPeers: '',
@@ -77,12 +76,6 @@ export default class BitcoinPanel extends Component {
   }
 
   getNodeStatus() {
-    APIClient.getBitseedDeviceData().then((response) => {
-      this.setState({ deviceID: response })
-    }).catch((error) => {
-      this.setState({ deviceID: 'No Data' })
-    })
-
     APIClient.getPingResult().then((data) => {   
       if (data.error !== null && data.error.code === -28) {
         this.setState({
@@ -186,8 +179,6 @@ export default class BitcoinPanel extends Component {
           {this.renderRowWithColumn('Peer Connection', this.state.connectedPeers)}
           {this.renderRowWithColumn('Tx in Mempool', this.state.txmempool)}
           {this.renderRowWithColumn('Minimum Relay Fee', this.state.minrelaytxfee)}
-          {this.renderRowWithColumn('Device ID', this.state.deviceID)}
-          {this.renderRowWithColumn('Device Version', 'No Data')}
         </React.Fragment>
       )
     }

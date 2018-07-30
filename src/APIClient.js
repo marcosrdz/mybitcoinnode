@@ -49,7 +49,23 @@ export default class APIClient {
         })
     }
 
-    static getBitseedDeviceData() {
+    static getDeviceInformation() {
+        return new Promise((resolve, reject) => {
+            fetch('http://localhost:3001/deviceInformation', {
+                method: 'GET',
+            })
+            .then((response) => {
+                return response.json()
+            })
+            .then((responseJSON) => {
+                resolve(responseJSON)
+            }).catch((error) => {
+                reject(error)
+            })
+        })
+    }
+
+    static getBitseedDeviceSerial() {
         return new Promise((resolve, reject) => {
             fetch('http://localhost:3001/serial', {
                 method: 'GET',

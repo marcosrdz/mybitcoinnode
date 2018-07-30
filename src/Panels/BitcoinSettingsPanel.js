@@ -31,6 +31,7 @@ export default class BitcoinSettingsPanel extends Component {
                   <Panel.Title>Bitcoin Server Settings</Panel.Title>
               </Panel.Heading>
               <Panel.Body>
+              {/*
                 <Form horizontal>
                 <FormGroup controlId="fromRPCProtocol">
                     <Col componentClass={ControlLabel} sm={3}>
@@ -69,6 +70,8 @@ export default class BitcoinSettingsPanel extends Component {
                     </Col>
                   </FormGroup>
                 </Form>
+                */}
+                Coming Soon...
             </Panel.Body>        
             </Panel>
           </Grid>

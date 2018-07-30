@@ -22,6 +22,8 @@ export default class AddressesPanel extends Component {
         publicIPv4Address: { address: '', isReachable: false},
         publicIPv6Address: { address: '', isReachable: false},
         publicOnionAddress: { address: '', isReachable: false},
+        localAddress: { address: '', isReachable: undefined},
+        macAddress: { address: '', isReachable: undefined}
     }
 
     getNodeStatus() {    
@@ -100,6 +102,15 @@ export default class AddressesPanel extends Component {
             }
         }
     })
+
+    APIClient.getDeviceInformation().then((response) => {
+        console.log(response)
+        this.setState({
+            localAddress: { address: response.localAddress, isReachable: undefined},
+            macAddress: { address: response.macAddress, isReachable: undefined}
+        })
+    })
+
     APIClient.getNetworkInfo().then((response) => {
         if (response.result !== undefined) {
             if (response.result.networks !== undefined) {        
@@ -162,7 +173,8 @@ export default class AddressesPanel extends Component {
       <React.Fragment>
         <Grid gap={0} width={0}>
         <span style={{ fontWeight: 'bold', textAlign: 'left'}}>{title}</span>
-        <span style={{ fontWeight: 'normal', textAlign: 'right'}}>{description.address} ({description.isReachable === false ? 'Not ' : null}Reachable)</span>
+        {description.isReachable !== undefined && <span style={{ fontWeight: 'normal', textAlign: 'right'}}>{description.address} ({description.isReachable === false ? 'Not ' : null}Reachable)</span>}
+        {description.isReachable === undefined && <span style={{ fontWeight: 'normal', textAlign: 'right'}}>{description.address}</span>}
         </Grid>
         <br />
       </React.Fragment>
@@ -176,6 +188,8 @@ export default class AddressesPanel extends Component {
                 {this.renderRowWithColumn('Public IPv4 Address:', this.state.publicIPv4Address)}
                 {this.renderRowWithColumn('Public IPv6 Address:', this.state.publicIPv6Address)}
                 {this.renderRowWithColumn('Public Onion Address:', this.state.publicOnionAddress)}
+                {this.renderRowWithColumn('Local Address:', this.state.localAddress)}
+                {this.renderRowWithColumn('MAC Address:', this.state.macAddress)}
             </React.Fragment>
         )
       } else {
@@ -194,6 +208,8 @@ export default class AddressesPanel extends Component {
               <Panel.Heading>
               <Grid width={96} gap={0} align='center'>
                   <Panel.Title>Your Addresses</Panel.Title>
+                  <Grid width={20} gap={90} align='right'>
+
                   { !panelConfiguration.panelHeaderButton.panelHeaderButtonHidden &&
                   <Button
                       bsStyle={panelConfiguration.panelHeaderButton.panelHeaderButtonButtonStyle}
@@ -203,6 +219,7 @@ export default class AddressesPanel extends Component {
                     {panelConfiguration.panelHeaderButton.panelHeaderButtonText}
                     </Button>
                   }
+                  </Grid>
                 </Grid>
               </Panel.Heading>
               <Panel.Body>
