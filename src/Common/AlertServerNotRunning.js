@@ -5,7 +5,7 @@ import { Alert } from 'react-bootstrap'
 export default class AlertServerNotRunning extends Component {
   render() {
     return (
-      <div>
+      <div style={{marginRight: '5em', marginLeft: '5em'}}>
         <Alert bsStyle="danger">
           <h4>Bitseed Web Server is not reachable.</h4>
           <p>
