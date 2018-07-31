@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
-import APIClient from './APIClient'
 import Header from './Header'
 import AlertServerNotRunning from './Common/AlertServerNotRunning'
 import Bitcoin from './Bitcoin'
@@ -14,24 +13,38 @@ class App extends Component {
   constructor() {
     super()
     this.state = { showServerAlert: false }
-    this.communicateWithBitseedServer = this.communicateWithBitseedServer.bind(this)
-    this.communicateWithBitseedServer()
+    this.connectToWebsocket()
   }
 
-  communicateWithBitseedServer() {
-    APIClient.getBitseedWebUIServerStatus().then((response) => {
+  connectToWebsocket() {
+    const ws = new WebSocket('ws://localhost:3001', 'echo-protocol')
+    
+    ws.onopen = () => {
       this.setState({showServerAlert: false})
-    }).catch((error) => {
+    }
+  
+    ws.onclose = (e) => {
+      console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason)
       this.setState({showServerAlert: true})
-    })
-  }
+      setTimeout(() => {
+        this.connectToWebsocket()
+      }, 1000)
+    }
+  
+    ws.onerror = (err) => {
+      console.error('Socket encountered error: ', err.message, 'Closing socket')
+      this.setState({showServerAlert: true})
+      ws.close()
+    }
 
+  }
+  
   render() {
     return(
       <Router> 
         <React.Fragment>       
         <Header />
-        { this.state.showServerAlert && <AlertServerNotRunning retryButtonAction={this.communicateWithBitseedServer}/>}
+        { this.state.showServerAlert && <AlertServerNotRunning />}
         <Switch>
         <Route exact path='/bitcoin' component={Bitcoin} />
         <Route exact path='/electrum' component={Electrum} />

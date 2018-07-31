@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Alert, Button } from 'react-bootstrap'
+import { Alert } from 'react-bootstrap'
 
 
 export default class AlertServerNotRunning extends Component {
@@ -13,9 +13,6 @@ export default class AlertServerNotRunning extends Component {
           </p>
           <p>
             You can start the server by running this command in the folder where the Bitseed Web UI is located: <strong>node server.js</strong>
-          </p>
-          <p>
-            <Button bsStyle="danger" onClick={this.props.retryButtonAction}>Retry</Button>
           </p>
         </Alert>
       </div>

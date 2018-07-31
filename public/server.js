@@ -1,11 +1,13 @@
+#!/usr/bin/env node
 const http = require('http')
 const fs = require('fs')
 const os = require('os')
 const sysInfo = require('systeminformation')
+const webSocket = require('websocket').server
 
 /* Device Uptime*/
 const moment = require("moment")
-const momentDurationFormatSetup = require("moment-duration-format")
+require("moment-duration-format")
 const uptimeFormat = "w [weeks], d [days], h [hours], m [minutes]"
 /* */
 
@@ -49,13 +51,10 @@ sysInfo.currentLoad().then(response => {
 })
 /* */
 
-
-
-
 function formatBytes(a,b){if(0==a)return"0 Bytes";var c=1024,d=b||2,e=["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"],f=Math.floor(Math.log(a)/Math.log(c));return parseFloat((a/Math.pow(c,f)).toFixed(d))+" "+e[f]}
 
 console.log('Bitseed Web UI server is now running. Waiting for requests...')
-http.createServer((request, response) => {
+const server = http.createServer((request, response) => {
     response.setHeader('Access-Control-Allow-Origin', '*')
     response.setHeader('Access-Control-Allow-Methods', 'GET, POST')
     response.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type')
@@ -125,3 +124,49 @@ http.createServer((request, response) => {
         response.end('Invalid Request')
     }
 }).listen(3001)
+
+/* Websocket */
+
+wsServer = new webSocket({
+    httpServer: server,
+    // You should not use autoAcceptConnections for production
+    // applications, as it defeats all standard cross-origin protection
+    // facilities built into the protocol and the browser.  You should
+    // *always* verify the connection's origin and decide whether or not
+    // to accept it.
+    autoAcceptConnections: false
+})
+
+function originIsAllowed(origin) {
+  return true
+}
+
+wsServer.on('request', (request) => {
+    if (!originIsAllowed(request.origin)) {
+      // Make sure we only accept requests from an allowed origin
+      request.reject()
+      console.log((new Date()) + ' Connection from origin ' + request.origin + ' rejected.')
+      return
+    }
+    
+    const connection = request.accept('echo-protocol', request.origin)
+    
+    console.log((new Date()) + ' Connection accepted.')
+    
+    connection.on('message', (message) => {
+        if (message.type === 'utf8') {
+            console.log('Received Message: ' + message.utf8Data);
+            connection.sendUTF(message.utf8Data);
+        }
+        else if (message.type === 'binary') {
+            console.log('Received Binary Message of ' + message.binaryData.length + ' bytes');
+            connection.sendBytes(message.binaryData);
+        }
+    })
+
+    connection.on('close', (reasonCode, description) => {
+        console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
+    })
+})
+
+/* */
