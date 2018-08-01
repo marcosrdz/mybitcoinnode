@@ -51,7 +51,7 @@ export default class APIClient {
                 })
                 .then((responseJSON) => {
                     if (responseJSON.statusCode !== undefined) {
-                        console.log('SUCCESS WITH STATUS CODE: ' +  method)
+                        console.log('ERROR WITH STATUS CODE: ' +  method)
                         reject(responseJSON)
                     } else {
                         console.log('SUCCESS: ' +  method)
