@@ -16,6 +16,7 @@ export default class BitcoinSettingsPanel extends Component {
   }
 
   componentDidMount() {
+
   }
 
   submitPressed = (event) => {

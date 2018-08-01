@@ -10,27 +10,48 @@ export default class BitseedSettingsPanel extends Component {
   constructor(props) {
     super()
     this.state = {
-      webUIBitcoinRPCHost: '',
-      webUIBitcoinRPCPort: '',
-      webUIBitcoinRPCUser: '',
-      webUIBitcoinRPCPassword: '',
+      isLoading: true,
+      data: {
+        webUIBitcoinRPCProtocol:  'http',
+        webUIBitcoinRPCHost: '',
+        webUIBitcoinRPCPort: '',
+        webUIBitcoinRPCUser: '',
+        webUIBitcoinRPCPassword: ''
+      }
     }
   }
 
   componentDidMount() {
+    APIClient.fetchConfigurationFile().then((response) => {
+      this.setState({isLoading: false, data: {
+        webUIBitcoinRPCHost: response.host,
+        webUIBitcoinRPCPort: response.port,
+        webUIBitcoinRPCUser: response.username,
+        webUIBitcoinRPCPassword: response.password,
+        webUIBitcoinRPCProtocol:  'http'
+      }})
+
+    }).catch(error => {
+      this.setState({isLoading: false})
+    })
   }
 
   submitPressed = (event) => {
     event.preventDefault()
-    APIClient.updateConfigurationFile(this.state)
-    .then(response => {
-    })
-    .catch(error => {
+    this.setState({ isLoading: true }, () => {
+      APIClient.updateConfigurationFile(this.state.data)
+      .then(response => {
+      })
+      .catch(error => {
+      })
     })
   }
 
   handleChange = (event) => {
-    this.setState({ [event.target.id] : event.target.value })
+    let data = this.state.data
+    data[event.target.id] = event.target.value
+ 
+    this.setState({ data: data })
   }
 
   render() {
@@ -49,7 +70,7 @@ export default class BitseedSettingsPanel extends Component {
                       RPC Host
                     </Col>
                     <Col sm={9}>
-                      <FormControl type="text" placeholder="localhost" value={this.state.webUIBitcoinRPCHost} onChange={this.handleChange} />
+                      <FormControl type="text" placeholder="localhost" value={this.state.data.webUIBitcoinRPCHost} onChange={this.handleChange} disabled={this.state.isLoading} />
                     </Col>
                   </FormGroup>
 
@@ -58,7 +79,7 @@ export default class BitseedSettingsPanel extends Component {
                       RPC Port
                     </Col>
                     <Col sm={2}>
-                      <FormControl type="text" placeholder="8333" value={this.state.webUIBitcoinRPCPort} onChange={this.handleChange} />
+                      <FormControl type="text" placeholder="8332" value={this.state.data.webUIBitcoinRPCPort} onChange={this.handleChange} disabled={this.state.isLoading} />
                     </Col>
                   </FormGroup>
   
@@ -67,7 +88,7 @@ export default class BitseedSettingsPanel extends Component {
                       RPC Username
                     </Col>
                     <Col sm={9}>
-                      <FormControl type="text" placeholder="bitcoinrpc" value={this.state.webUIBitcoinRPCUser} onChange={this.handleChange} />
+                      <FormControl type="text" placeholder="bitcoinrpc" value={this.state.data.webUIBitcoinRPCUser} onChange={this.handleChange} disabled={this.state.isLoading} />
                     </Col>
                   </FormGroup>
 
@@ -76,13 +97,13 @@ export default class BitseedSettingsPanel extends Component {
                       RPC Password
                     </Col>
                     <Col sm={9}>
-                      <FormControl type="text" placeholder="bitseed" value={this.state.webUIBitcoinRPCPassword} onChange={this.handleChange} />
+                      <FormControl type="text" placeholder="bitseed" value={this.state.data.webUIBitcoinRPCPassword} onChange={this.handleChange} disabled={this.state.isLoading} />
                     </Col>
                   </FormGroup>
 
                   <FormGroup>
                     <Col smOffset={3} sm={1}>
-                      <Button type="submit">Save</Button>
+                      <Button type="submit" disabled={this.state.isLoading}>Save</Button>
                     </Col>
                   </FormGroup>
                 </Form>

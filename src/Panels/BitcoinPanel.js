@@ -103,7 +103,6 @@ export default class BitcoinPanel extends Component {
         }, () => this.getNetworkInformation())
       }
     }).catch((error) => {
-      console.log(error)
       if (error.name === 'TypeError') {
         this.setState({
           panelConfiguration : {

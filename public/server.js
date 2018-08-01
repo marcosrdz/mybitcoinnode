@@ -80,8 +80,8 @@ const server = http.createServer((request, response) => {
                             port: port, 
                             protocol: protocol, 
                             host: host, 
-                            rpcuser: rpcuser, 
-                            rpcpassword: rpcpassword,
+                            username: rpcuser, 
+                            password: rpcpassword,
                             bitcoinConfAbsolutePath: bitcoinConfAbsolutePath 
                         })
                         fs.writeFile("config.json", newData, (err) => {
@@ -95,8 +95,8 @@ const server = http.createServer((request, response) => {
                             port:  port === undefined || port !== existingData.port ? port : existingData.port, 
                             protocol: protocol === undefined || protocol !== existingData.protocol ? protocol : existingData.protocol, 
                             host: host === undefined || host !== existingData.host ? host : existingData.host, 
-                            rpcuser: rpcuser === undefined || rpcuser !== existingData.rpcuser ? rpcuser : existingData.rpcuser, 
-                            rpcpassword: rpcpassword === undefined || rpcpassword !== existingData.rpcpassword ? rpcpassword : existingData.rpcpassword, 
+                            username: rpcuser === undefined || rpcuser !== existingData.rpcuser ? rpcuser : existingData.rpcuser, 
+                            password: rpcpassword === undefined || rpcpassword !== existingData.rpcpassword ? rpcpassword : existingData.rpcpassword, 
                             bitcoinConfAbsolutePath: bitcoinConfAbsolutePath === undefined || bitcoinConfAbsolutePath !== existingData.bitcoinConfAbsolutePath ? bitcoinConfAbsolutePath : existingData.bitcoinConfAbsolutePath, 
                         })
                         fs.writeFile("config.json", updatedData, (err) => {
