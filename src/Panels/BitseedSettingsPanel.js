@@ -5,13 +5,15 @@ import { Panel, Button, ControlLabel, FormGroup, FormControl, Form, Col } from '
 import APIClient from '../APIClient'
 import Grid from 'react-css-grid'
 
-export default class BitcoinSettingsPanel extends Component {
+export default class BitseedSettingsPanel extends Component {
 
   constructor(props) {
     super()
     this.state = {
-      bitcoinRPCUser: '',
-      bitcoinRPCPassword: '',
+      webUIBitcoinRPCHost: '',
+      webUIBitcoinRPCPort: '',
+      webUIBitcoinRPCUser: '',
+      webUIBitcoinRPCPassword: '',
     }
   }
 
@@ -38,11 +40,29 @@ export default class BitcoinSettingsPanel extends Component {
         <Grid>
           <Panel>
               <Panel.Heading>
-                  <Panel.Title>Bitcoin Server Settings</Panel.Title>
+                  <Panel.Title>Bitseed Web UI Settings for Bitcoin</Panel.Title>
               </Panel.Heading>
               <Panel.Body>
                 <Form horizontal onSubmit={this.submitPressed}>
-                  <FormGroup controlId="bitcoinRPCUser">
+                <FormGroup controlId="webUIBitcoinRPCHost">
+                    <Col componentClass={ControlLabel} sm={3}>
+                      RPC Host
+                    </Col>
+                    <Col sm={9}>
+                      <FormControl type="text" placeholder="localhost" value={this.state.webUIBitcoinRPCHost} onChange={this.handleChange} />
+                    </Col>
+                  </FormGroup>
+
+                  <FormGroup controlId="webUIBitcoinRPCPort">
+                    <Col componentClass={ControlLabel} sm={3}>
+                      RPC Port
+                    </Col>
+                    <Col sm={2}>
+                      <FormControl type="text" placeholder="8333" value={this.state.webUIBitcoinRPCPort} onChange={this.handleChange} />
+                    </Col>
+                  </FormGroup>
+  
+                  <FormGroup controlId="webUIBitcoinRPCUser">
                     <Col componentClass={ControlLabel} sm={3}>
                       RPC Username
                     </Col>
@@ -51,7 +71,7 @@ export default class BitcoinSettingsPanel extends Component {
                     </Col>
                   </FormGroup>
 
-                  <FormGroup controlId="bitcoinRPCPassword">
+                  <FormGroup controlId="webUIBitcoinRPCPassword">
                     <Col componentClass={ControlLabel} sm={3}>
                       RPC Password
                     </Col>
