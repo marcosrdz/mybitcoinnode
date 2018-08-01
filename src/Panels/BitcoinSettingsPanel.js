@@ -1,7 +1,7 @@
 
 
 import React, { Component } from 'react'
-import { Panel, Button, ControlLabel, FormGroup, FormControl, Form, Col, DropdownButton, MenuItem } from 'react-bootstrap'
+import { Panel, Button, ControlLabel, FormGroup, FormControl, Form, Col } from 'react-bootstrap'
 import APIClient from '../APIClient'
 import Grid from 'react-css-grid'
 
@@ -10,15 +10,27 @@ export default class BitcoinSettingsPanel extends Component {
   constructor(props) {
     super()
     this.state = {
-      
+      webUIBitcoinRPCHost: '',
+      webUIBitcoinRPCPort: '',
+      webUIBitcoinRPCUser: '',
+      webUIBitcoinRPCPassword: '',
     }
-  }
-  componentWillUnmount() {
-    clearInterval(this.interval)
   }
 
   componentDidMount() {
-   // this.interval = setInterval(() => this.getNetworkInformation(), 1000)
+  }
+
+  submitPressed = (event) => {
+    event.preventDefault()
+    APIClient.updateConfigurationFile(this.state)
+    .then(response => {
+    })
+    .catch(error => {
+    })
+  }
+
+  handleChange = (event) => {
+    this.setState({ [event.target.id] : event.target.value })
   }
 
   render() {
@@ -28,50 +40,52 @@ export default class BitcoinSettingsPanel extends Component {
         <Grid>
           <Panel>
               <Panel.Heading>
-                  <Panel.Title>Bitcoin Server Settings</Panel.Title>
+                  <Panel.Title>Bitseed Web UI Settings for Bitcoin</Panel.Title>
               </Panel.Heading>
               <Panel.Body>
-              {/*
-                <Form horizontal>
-                <FormGroup controlId="fromRPCProtocol">
+                <Form horizontal onSubmit={this.submitPressed}>
+                <FormGroup controlId="webUIBitcoinRPCHost">
                     <Col componentClass={ControlLabel} sm={3}>
-                      RPC Protocol
+                      RPC Host
                     </Col>
                     <Col sm={9}>
-                    <DropdownButton
-                      key={1}
-                    >
-                      <MenuItem key="1">http</MenuItem>
-                    </DropdownButton>
+                      <FormControl type="text" placeholder="localhost" value={this.state.webUIBitcoinRPCHost} onChange={this.handleChange} />
                     </Col>
                   </FormGroup>
 
-                  <FormGroup controlId="fromRPCUser">
+                  <FormGroup controlId="webUIBitcoinRPCPort">
+                    <Col componentClass={ControlLabel} sm={3}>
+                      RPC Port
+                    </Col>
+                    <Col sm={2}>
+                      <FormControl type="text" placeholder="8333" value={this.state.webUIBitcoinRPCPort} onChange={this.handleChange} />
+                    </Col>
+                  </FormGroup>
+  
+                  <FormGroup controlId="webUIBitcoinRPCUser">
                     <Col componentClass={ControlLabel} sm={3}>
                       RPC Username
                     </Col>
                     <Col sm={9}>
-                      <FormControl type="email" placeholder="bitcoinrpc" />
+                      <FormControl type="text" placeholder="bitcoinrpc" value={this.state.webUIBitcoinRPCUser} onChange={this.handleChange} />
                     </Col>
                   </FormGroup>
 
-                  <FormGroup controlId="fromRPCPassword">
+                  <FormGroup controlId="webUIBitcoinRPCPassword">
                     <Col componentClass={ControlLabel} sm={3}>
-                    RPC Password
+                      RPC Password
                     </Col>
                     <Col sm={9}>
-                      <FormControl type="password" placeholder="bitseed" />
+                      <FormControl type="text" placeholder="bitseed" value={this.state.webUIBitcoinRPCPassword} onChange={this.handleChange} />
                     </Col>
                   </FormGroup>
 
                   <FormGroup>
-                    <Col smOffset={3} sm={8}>
+                    <Col smOffset={3} sm={1}>
                       <Button type="submit">Save</Button>
                     </Col>
                   </FormGroup>
                 </Form>
-                */}
-                Coming Soon...
             </Panel.Body>        
             </Panel>
           </Grid>

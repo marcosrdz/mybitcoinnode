@@ -1,7 +1,39 @@
 export default class APIClient {
 
+    static fetchConfigurationFile() {
+        return new Promise((resolve, reject) => {
+            fetch('http://localhost:3001/configuration').then(response => {
+                return response.json()
+            }).then(responseJSON => {
+                resolve(responseJSON)
+            }).catch(error => {
+                reject(error)
+            })
+        }) 
+    }
+
+    static updateConfigurationFile(newData) {
+        return new Promise((resolve, reject) => {
+            fetch('http://localhost:3001/configuration', {
+                method: 'POST',
+                body: JSON.stringify(newData),
+                headers:
+                {
+                    'Accept': 'application/json',
+                }
+            }).then(response => {
+                console.log(response)
+                return response.json()
+            }).then(responseJSON => {
+                resolve(responseJSON)
+            }).catch(error => {
+                reject(error)
+            })
+        }) 
+    }
+
     static _fetchJSON(method) {
-        return Promise.all([fetchConfigurationFile()]).then((results) => { 
+        return Promise.all([APIClient.fetchConfigurationFile()]).then((results) => { 
             const clientInfo = results[0]
             return new Promise((resolve, reject) => {
                 fetch(clientInfo.protocol + '://' + clientInfo.host + ':' + clientInfo.port, {
@@ -106,10 +138,4 @@ export default class APIClient {
 const responses = {
     bitcoinServerAuthenticationProvidedInvalid: 'The provided credentials are not authorized to access this server.',
     bitcoinServerStopping: 'Bitcoin server stopping'
-}
-
-async function fetchConfigurationFile() {
-    const response = await fetch('http://localhost:3001/configuration')
-    const responseJSON = await response.json() 
-    return responseJSON
 }
