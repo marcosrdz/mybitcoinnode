@@ -71,7 +71,7 @@ export default class BitseedSettingsPanel extends Component {
                     </Col>
                     <Col sm={9}>
                       <FormControl type="text" placeholder="localhost" value={this.state.data.webUIBitcoinRPCHost} onChange={this.handleChange} disabled={this.state.isLoading} />
-                      <HelpBlock>If your Bitcoin Server is not hosted in the same machine as this web UI, you may use tools such as <a href="https://www.npmjs.com/package/corsproxy"><strong>corsproxy</strong></a></HelpBlock>
+                      <HelpBlock>If your Bitcoin Server is not hosted in the same machine as this web UI, you may use tools such as <a href="https://www.npmjs.com/package/corsproxy"><strong>corsproxy</strong></a>.</HelpBlock>
                     </Col>
                   </FormGroup>
 
