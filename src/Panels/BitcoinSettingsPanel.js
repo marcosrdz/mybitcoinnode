@@ -1,7 +1,7 @@
 
 
 import React, { Component } from 'react'
-import { Panel, Button, ControlLabel, FormGroup, FormControl, Form, Col } from 'react-bootstrap'
+import { PageHeader, Button, ControlLabel, FormGroup, FormControl, Form, Col } from 'react-bootstrap'
 import APIClient from '../APIClient'
 import Grid from 'react-css-grid'
 
@@ -36,12 +36,7 @@ export default class BitcoinSettingsPanel extends Component {
     return (
       <div style={{ textAlign: 'center'}}>
         <div style={{ width: '600px',   marginLeft: 'auto', marginRight: 'auto', textAlign: 'left'}}>
-        <Grid>
-          <Panel>
-              <Panel.Heading>
-                  <Panel.Title>Bitcoin Server Settings</Panel.Title>
-              </Panel.Heading>
-              <Panel.Body>
+          <PageHeader>Bitcoin Server Settings</PageHeader>
                 <Form horizontal onSubmit={this.submitPressed}>
                   <FormGroup controlId="bitcoinRPCUser">
                     <Col componentClass={ControlLabel} sm={3}>
@@ -67,9 +62,6 @@ export default class BitcoinSettingsPanel extends Component {
                     </Col>
                   </FormGroup>
                 </Form>
-            </Panel.Body>        
-            </Panel>
-          </Grid>
         </div>
       </div>
     )

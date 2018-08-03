@@ -7,8 +7,8 @@ export default class Settings extends Component {
 
   render() {
     return (
-    <div >
-        <Tabs defaultActiveKey={2} id="uncontrolled-tab-example">
+      <div style={{ width: '600px',   marginLeft: 'auto', marginRight: 'auto', textAlign: 'left'}}>
+        <Tabs defaultActiveKey={1} id="uncontrolled-tab-example">
           <Tab eventKey={1} title="Bitseed">
             <BitseedSettingsPanel />
           </Tab>

@@ -1,7 +1,7 @@
 
 
 import React, { Component } from 'react'
-import { Panel, Button, ControlLabel, FormGroup, FormControl, Form, Col, HelpBlock } from 'react-bootstrap'
+import { Button, ControlLabel, FormGroup, FormControl, Form, Col, HelpBlock, PageHeader } from 'react-bootstrap'
 import APIClient from '../APIClient'
 import Grid from 'react-css-grid'
 
@@ -58,12 +58,7 @@ export default class BitseedSettingsPanel extends Component {
     return (
       <div style={{ textAlign: 'center'}}>
         <div style={{ width: '600px',   marginLeft: 'auto', marginRight: 'auto', textAlign: 'left'}}>
-        <Grid>
-          <Panel>
-              <Panel.Heading>
-                  <Panel.Title>Bitseed Web UI Settings for Bitcoin</Panel.Title>
-              </Panel.Heading>
-              <Panel.Body>
+        <PageHeader>Bitseed Web UI</PageHeader>
                 <Form horizontal onSubmit={this.submitPressed}>
                 <FormGroup controlId="webUIBitcoinRPCHost">
                     <Col componentClass={ControlLabel} sm={3}>
@@ -108,9 +103,7 @@ export default class BitseedSettingsPanel extends Component {
                     </Col>
                   </FormGroup>
                 </Form>
-            </Panel.Body>        
-            </Panel>
-          </Grid>
+
         </div>
       </div>
     )
