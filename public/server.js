@@ -148,14 +148,22 @@ const server = http.createServer((request, response) => {
                 cpuLoad: cpuLoad
             }))
         } else if (request.url === '/bitcoinConf') {
-            response.setHeader('Content-Type', 'text/plain')
+            response.setHeader('Content-Type', 'application/json')
+            let configurationFile = fs.readFileSync("./bitcoin.conf", "utf8").split('\n')
+
+            for (const [index, value] of configurationFile.entries()) {
+
+                console.log(value)
+
+                if (value.startsWith('rpcuser=')) {
+                    configurationFile[index] = 'rpcuser=840'
+                } else if (value.startsWith('rpcpassword=')) {
+                    configurationFile[index] = 'rpcpassword=840'
+                }
+            }
+
             response.statusCode = 200
-        
-            fs.readFile("serial", 'utf8', (error, data) => {
-                if (error) throw error
-                console.log(`${request.method} Request: ${request.url} : ${data.toString()}`)
-                response.end(data)
-            }) 
+            response.end(JSON.stringify({ conf: configurationFile}))
         }
     } else {
         response.statusCode = 501
