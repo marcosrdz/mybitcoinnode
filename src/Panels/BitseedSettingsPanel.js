@@ -41,8 +41,10 @@ export default class BitseedSettingsPanel extends Component {
     this.setState({ isLoading: true }, () => {
       APIClient.updateConfigurationFile(this.state.data)
       .then(response => {
+        this.setState({ isLoading: false })
       })
       .catch(error => {
+        this.setState({ isLoading: false })
       })
     })
   }

@@ -32,6 +32,26 @@ export default class APIClient {
         }) 
     }
 
+    static updateBitcoinConfigurationFile(newData) {
+        return new Promise((resolve, reject) => {
+            fetch('http://localhost:3001/bitcoinConf', {
+                method: 'POST',
+                body: JSON.stringify(newData),
+                headers:
+                {
+                    'Accept': 'application/json',
+                }
+            }).then(response => {
+                console.log(response)
+                return response.json()
+            }).then(responseJSON => {
+                resolve(responseJSON)
+            }).catch(error => {
+                reject(error)
+            })
+        }) 
+    }
+
     static _fetchJSON(method) {
         return Promise.all([APIClient.fetchConfigurationFile()]).then((results) => { 
             const clientInfo = results[0]
@@ -84,6 +104,22 @@ export default class APIClient {
     static getDeviceInformation() {
         return new Promise((resolve, reject) => {
             fetch('http://localhost:3001/deviceInformation', {
+                method: 'GET',
+            })
+            .then((response) => {
+                return response.json()
+            })
+            .then((responseJSON) => {
+                resolve(responseJSON)
+            }).catch((error) => {
+                reject(error)
+            })
+        })
+    }
+
+    static getBitcoinConf() {
+        return new Promise((resolve, reject) => {
+            fetch('http://localhost:3001/bitcoinConf', {
                 method: 'GET',
             })
             .then((response) => {

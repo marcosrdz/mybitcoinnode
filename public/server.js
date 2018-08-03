@@ -109,7 +109,56 @@ const server = http.createServer((request, response) => {
 
                 }) 
             })
-        } 
+        } else if (request.url === '/bitcoinConf') {
+            let body = ''
+            request.on('data', chunk => {
+                body += chunk.toString()
+            })
+            request.on('end', () => {
+                const parsedJSON = JSON.parse(body)                
+                
+                const bitcoinConfPath = parsedJSON.bitcoinConfPath,
+                    rpcuser = parsedJSON.rpcuser, 
+                    rpcpassword = parsedJSON.rpcpassword
+
+                fs.readFile(bitcoinConfPath, 'utf8', (error, existingData) => {
+                    if (error) {
+                        const newData = `
+                            rpcport=8332 \n
+                            rpcuser = ${rpcuser} \n 
+                            rpcpassword = ${rpcpassword}
+                            `
+                        fs.writeFile(bitcoinConfPath, newData, (err) => {
+                            if (err) throw err
+                            console.log(`${request.method} Request: ${request.url} : ${newData.toString()}`)
+                            response.statusCode = 200
+                            response.end(newData)
+                        })
+                    } else {
+                    const updatedData = JSON.stringify({
+                        bitcoinConfPath:  bitcoinConfPath === undefined || bitcoinConfPath !== existingData.bitcoinConfPath ? bitcoinConfPath : existingData.bitcoinConfPath, 
+                        rpcuser: rpcuser === undefined || rpcuser !== existingData.rpcuser ? rpcuser : existingData.rpcuser, 
+                        rpcpassword: rpcpassword === undefined || rpcpassword !== existingData.rpcpassword ? rpcpassword : existingData.rpcpassword, 
+                    })
+
+                    let configurationFile = fs.readFileSync(bitcoinConfPath, "utf8").split('\n')
+                    for (const [index, value] of configurationFile.entries()) {
+                        if (value.startsWith('rpcuser=')) {
+                            configurationFile[index] = `rpcuser=${rpcuser}`
+                        } else if (value.startsWith('rpcpassword=')) {
+                            configurationFile[index] = `rpcpassword=${rpcpassword}`
+                        }
+                    }
+
+                    fs.writeFile(bitcoinConfPath, configurationFile.join('\n'), (err) => {
+                        if (err) throw err
+                        console.log(`${request.method} Request: ${request.url} : ${updatedData.toString()}`)
+                        response.statusCode = 200
+                        response.end(updatedData)
+                    })
+                }
+            })
+        })}
     } else if (request.method === 'GET') {
         if (request.url === '/configuration') {
             response.setHeader('Content-Type', 'application/json')
@@ -151,19 +200,17 @@ const server = http.createServer((request, response) => {
             response.setHeader('Content-Type', 'application/json')
             let configurationFile = fs.readFileSync("./bitcoin.conf", "utf8").split('\n')
 
+            let confJSON = { bitcoinConfPath: './bitcoin.conf'}
             for (const [index, value] of configurationFile.entries()) {
-
-                console.log(value)
-
                 if (value.startsWith('rpcuser=')) {
-                    configurationFile[index] = 'rpcuser=840'
+                    confJSON.rpcuser = value.split('rpcuser=')[1]
                 } else if (value.startsWith('rpcpassword=')) {
-                    configurationFile[index] = 'rpcpassword=840'
+                    confJSON.rpcuser = value.split('rpcpassword=')[1]
                 }
             }
 
             response.statusCode = 200
-            response.end(JSON.stringify({ conf: configurationFile}))
+            response.end(JSON.stringify(confJSON))
         }
     } else {
         response.statusCode = 501
