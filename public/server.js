@@ -4,6 +4,8 @@ const fs = require('fs')
 const os = require('os')
 const sysInfo = require('systeminformation')
 const webSocket = require('websocket').server
+const express = require('express')
+const app = express()
 
 /* Device Uptime*/
 const moment = require("moment")
@@ -216,7 +218,11 @@ const server = http.createServer((request, response) => {
         response.statusCode = 501
         response.end('Invalid Request')
     }
-}).listen(3001)
+})
+
+server.listen(3001, () => {
+    console.log('Running at http://localhost:3001')
+})
 
 /* Websocket */
 
@@ -261,5 +267,8 @@ wsServer.on('request', (request) => {
         console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
     })
 })
+
+aapp.use(express.static(__dirname))
+app.listen(80)
 
 /* */

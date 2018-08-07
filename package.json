@@ -5,6 +5,7 @@
   "author": "marcospr@pm.me",
   "licemse": "MIT",
   "dependencies": {
+    "express": "^4.16.3",
     "moment": "^2.22.2",
     "moment-duration-format": "^2.2.2",
     "react": "^16.4.2",
