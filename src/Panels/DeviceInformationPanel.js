@@ -62,57 +62,13 @@ export default class DeviceInformationPanel extends Component {
     })
   }
 
-  getNodeStatus() {
-    APIClient.getPingResult().then((data) => {   
-      if (data.error !== null && data.error.code === -28) {
-        this.setState({
-          panelConfiguration : {
-            panelBodyPendingText: 'Shutting down Bitcoin Server...',
-            panelBodyPendingTextHidden: false
-          }
-        })
-      } else {
-        this.setState({
-          panelConfiguration : {
-            panelBodyPendingTextHidden: true
-          }
-        }, () => this.geDeviceInformation())
-      }
-    }).catch((error) => {
-      console.log(error)
-      if (error.name === 'TypeError') {
-        this.setState({
-          panelConfiguration : {
-            panelBodyPendingText: 'The provided host name is not reachable.',
-            panelBodyPendingTextHidden: false
-          }
-        })
-      }
-      else if (error.statusCode === 502) {
-        this.setState({
-          panelConfiguration : {
-            panelBodyPendingText: 'Bitcoin Core RPC Server is not reachable.',
-            panelBodyPendingTextHidden: false
-          }
-        })
-      } else {
-        this.setState({
-          panelConfiguration : {
-            panelBodyPendingText: 'The provided credentials are not authorized to access this server. Please, go to settings and double check your credentials.',
-            panelBodyPendingTextHidden: false
-          }
-        })
-      }
-    })  
-  }
-
   componentWillUnmount() {
     clearInterval(this.interval)
   }
 
   componentDidMount() {
    // this.interval = setInterval(() => this.getNetworkInformation(), 1000)
-    this.getNodeStatus()
+   this.geDeviceInformation()
   }
 
   renderRowWithColumn(title, description = 'No Data') {
@@ -128,29 +84,17 @@ export default class DeviceInformationPanel extends Component {
   }
 
   renderLoadingIndicatorOrData() {
-    const panelConfiguration = this.state.panelConfiguration
-
-    if (!panelConfiguration.panelBodyPendingTextHidden) {
-      return(
-        <React.Fragment>
-          {panelConfiguration.panelBodyPendingText}
-        </React.Fragment>
-      )
-    } else {
-      return(
-        <React.Fragment>
-          {this.renderRowWithColumn('Disk Size', this.state.diskSize)}
-          {this.renderRowWithColumn('Disk Space Used', this.state.diskSpaceUsed)}
-          {this.renderRowWithColumn('Disk Space Available', this.state.diskSpaceAvailable)}
-          {this.renderRowWithColumn('RAM Used', this.state.ramUsed)}
-          {this.renderRowWithColumn('RAM Free', this.state.ramFree)}
-          {this.renderRowWithColumn('CPU Load', this.state.cpuLoad)}
-          {this.renderRowWithColumn('Uptime', this.state.uptime)}
-          {this.renderRowWithColumn('Device S/N', this.state.deviceID)}
-          {this.renderRowWithColumn('Device Version')}
-        </React.Fragment>
-      )
-    }
+    return(<React.Fragment>
+        {this.renderRowWithColumn('Disk Size', this.state.diskSize)}
+        {this.renderRowWithColumn('Disk Space Used', this.state.diskSpaceUsed)}
+        {this.renderRowWithColumn('Disk Space Available', this.state.diskSpaceAvailable)}
+        {this.renderRowWithColumn('RAM Used', this.state.ramUsed)}
+        {this.renderRowWithColumn('RAM Free', this.state.ramFree)}
+        {this.renderRowWithColumn('CPU Load', this.state.cpuLoad)}
+        {this.renderRowWithColumn('Uptime', this.state.uptime)}
+        {this.renderRowWithColumn('Device S/N', this.state.deviceID)}
+        {this.renderRowWithColumn('Device Version')}
+      </React.Fragment>)
   }
 
   render() {
