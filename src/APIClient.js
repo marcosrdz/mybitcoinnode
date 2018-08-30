@@ -153,6 +153,22 @@ export default class APIClient {
         return APIClient._fetchJSON('getblockchaininfo')
     }
 
+    static getBlockCountFromBlockExplorer() {
+        return new Promise((resolve, reject) => {
+            fetch('https://blockexplorer.com/api/status?q=getBlockCount', {
+                method: 'GET'
+            })
+            .then((response) => {
+                return response.json()
+            })
+            .then((responseJSON) => {
+                resolve(responseJSON)
+            }).catch((error) => {
+                reject(error)
+            })
+        })
+    }
+
     static getNetworkInfo() {
         return APIClient._fetchJSON('getnetworkinfo')
     }

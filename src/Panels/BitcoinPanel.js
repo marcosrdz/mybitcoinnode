@@ -1,7 +1,7 @@
 
 
 import React, { Component } from 'react'
-import { Panel, Button } from 'react-bootstrap'
+import { Panel, Button, ProgressBar } from 'react-bootstrap'
 import APIClient from '../APIClient'
 import Grid from 'react-css-grid'
 
@@ -61,10 +61,11 @@ export default class BitcoinPanel extends Component {
       APIClient.getBlockchainInformation(), 
       APIClient.getNetworkInfo(), 
       APIClient.getMempoolInfo(),
+      APIClient.getBlockCountFromBlockExplorer()
     ]
     Promise.all(promises).then((data) => {
       this.setState({
-        headers: data[0].result.headers,
+        headers: data[3].blockcount,
         blocks: data[0].result.blocks,
         btcCoreVersion: data[1].result.subversion,
         connectedPeers: data[1].result.connections,
@@ -117,7 +118,7 @@ export default class BitcoinPanel extends Component {
       else if (error.statusCode === 502) {
         this.setState({
           panelConfiguration : {
-            panelBodyPendingText: 'Bitcoin Core RPC Server is not reachable.',
+            panelBodyPendingText: 'At startup, Bitcoin requires 10-15 minutes to check its database and the web UI can be active. Please wait 10-15 minutes.',
             panelBodyPendingTextHidden: false,
             panelHeaderButton: {
               panelHeaderButtonHidden: true,
@@ -159,6 +160,21 @@ export default class BitcoinPanel extends Component {
     )
   }
 
+  renderBlockRowWithColumn(title, description = 'No Data') {
+    return(
+      <React.Fragment>
+        <Grid width={20}>
+        <span style={{ fontWeight: 'bold', textAlign: 'left'}}>{title}</span>
+        <span style={{ textAlign: 'right'}}><ProgressBar now={(this.state.blocks/this.state.headers)*100} label={`${ (this.state.blocks/this.state.headers)*100}%`}/>
+        <span style={{ textAlign: 'right'}}>{this.state.blocks} of {this.state.headers}</span>
+
+        </span>
+        </Grid>
+        <br />
+      </React.Fragment>
+    )
+  }
+
   renderLoadingIndicatorOrData() {
     const panelConfiguration = this.state.panelConfiguration
 
@@ -173,8 +189,7 @@ export default class BitcoinPanel extends Component {
         <React.Fragment>
           {this.renderRowWithColumn('Bitcoin Core Version', this.state.btcCoreVersion)}
           {this.renderRowWithColumn('Node Type', this.state.pruned === false ? 'Full Node' : 'Pruned')}
-          {this.renderRowWithColumn('Device At Block', this.state.blocks)}
-          {this.renderRowWithColumn('Network Block', this.state.headers)}
+          {this.renderBlockRowWithColumn('Block Status', this.state.blocks)}
           {this.renderRowWithColumn('Peer Connection', this.state.connectedPeers)}
           {this.renderRowWithColumn('Tx in Mempool', this.state.txmempool)}
           {this.renderRowWithColumn('Minimum Relay Fee', this.state.minrelaytxfee)}
