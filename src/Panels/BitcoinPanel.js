@@ -165,7 +165,7 @@ export default class BitcoinPanel extends Component {
       <React.Fragment>
         <Grid width={20}>
         <span style={{ fontWeight: 'bold', textAlign: 'left'}}>{title}</span>
-        <span style={{ textAlign: 'right'}}><ProgressBar now={(this.state.blocks/this.state.headers)*100} label={`${ (this.state.blocks/this.state.headers)*100}%`}/>
+        <span style={{ textAlign: 'right'}}><ProgressBar active striped now={(this.state.blocks/this.state.headers)*100} label={`${ ((this.state.blocks/this.state.headers)*100).toFixed(2)}%`}/>
         <span style={{ textAlign: 'right'}}>{this.state.blocks} of {this.state.headers}</span>
 
         </span>
