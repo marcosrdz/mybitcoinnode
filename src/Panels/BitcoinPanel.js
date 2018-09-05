@@ -1,10 +1,10 @@
 
 
 import React, { Component } from 'react'
-import { Alert, Button, Col, Row, PageHeader, ProgressBar } from 'react-bootstrap'
+import { Alert, Button, ProgressBar } from 'react-bootstrap'
+import PanelHeader from './PanelHeader'
 import APIClient from '../APIClient'
 import Grid from 'react-css-grid'
-import { PulseLoader } from 'react-spinners'
 
 export default class BitcoinPanel extends Component {
 
@@ -170,7 +170,7 @@ export default class BitcoinPanel extends Component {
         {(this.state.btcCoreVersion !== undefined) && this.renderRowWithColumn('Bitcoin Core Version', this.state.btcCoreVersion)}
         {(this.state.pruned !== undefined) && this.renderRowWithColumn('Node Type', this.state.pruned === false ? 'Full Node' : 'Pruned')}
         {(this.state.blocks !== undefined && this.state.headers !== undefined) && this.renderBlockRowWithColumn('Block Status', this.state.blocks)}
-        {(this.state.connectedPeers !== undefined) && this.renderRowWithColumn('Peer Connection', this.state.connectedPeers)}
+        {(this.state.connectedPeers !== undefined) && this.renderRowWithColumn('Peer Connections', this.state.connectedPeers)}
         {(this.state.txmempool !== undefined) && this.renderRowWithColumn('Tx in Mempool', this.state.txmempool)}
         {(this.state.minrelaytxfee !== undefined) && this.renderRowWithColumn('Minimum Relay Fee', this.state.minrelaytxfee)}
       </React.Fragment>
@@ -217,16 +217,7 @@ export default class BitcoinPanel extends Component {
     return (
       <div style={{ textAlign: 'center'}}>
         <div style={{ width: '60%',   marginLeft: 'auto', marginRight: 'auto', textAlign: 'left'}}>
-        <PageHeader>
-          <Row className="show-grid">
-            <Col xs={12} md={10}>
-                Bitcoin <small>Daemon Status</small>
-              </Col>
-            <Col xsHidden md={2}>
-                <PulseLoader sizeUnit={"px"} size={10} color={'#9B9B9B'} loading={this.state.panelHeaderShowLoadingIndicator} />
-            </Col>
-          </Row>
-        </PageHeader>
+        <PanelHeader title="Bitcoin" subtitle="Daemon Status" showLoadingIndicator={this.state.panelHeaderShowLoadingIndicator} />
         {this.state.showNetworkConnectionErrorAlert && this.networkConnectionErrorAlert()}
         {this.state.showLoadingBlockIndexAlert && this.loadingBlockIndexAlert()}
         {this.state.showInitialDownloadAlert && this.initialDownloadAlert()}
