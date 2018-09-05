@@ -63,6 +63,7 @@ export default class BitcoinPanel extends Component {
             showInitialDownloadAlert: values[1].result.initialblockdownload,
             headers: values[2].blockcount,
             minrelaytxfee: values[3].result.minrelaytxfee,
+            txmempool: values[3].result.size,
             panelHeaderShowLoadingIndicator: false,         
             showNetworkConnectionErrorAlert: false,    
             showLoadingBlockIndexAlert: false   
@@ -182,7 +183,7 @@ export default class BitcoinPanel extends Component {
         <Alert bsStyle="danger">
             <h4>Network Error</h4>
             <p>
-              An error was encountered when attempting to collect the information related to your Bitcoin node.
+              The network connection was lost when attempting to collect the information from your node. This may be due to your node being under heavy load.
             </p>
             <p>
               <Button bsStyle="danger" onClick={() => this.getNodeStatus()}>Retry</Button>
