@@ -215,7 +215,7 @@ export default class BitcoinPanel extends Component {
   render() {
     return (
       <div style={{ textAlign: 'center'}}>
-        <div style={{ width: '600px',   marginLeft: 'auto', marginRight: 'auto', textAlign: 'left'}}>
+        <div style={{ width: '60%',   marginLeft: 'auto', marginRight: 'auto', textAlign: 'left'}}>
         <PageHeader>
           <Row className="show-grid">
             <Col xs={12} md={10}>
