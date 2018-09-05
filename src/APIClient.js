@@ -79,6 +79,7 @@ export default class APIClient {
                     }
                 }).catch((error) => {
                     console.log('ERROR: ' +  method)
+                    console.log('ERROR: ' +  error)
                     reject(error)
                 })
             })
@@ -162,8 +163,11 @@ export default class APIClient {
                 return response.json()
             })
             .then((responseJSON) => {
+                console.log('SUCESS: getblockchaininfo')
                 resolve(responseJSON)
             }).catch((error) => {
+                console.log('ERROR: getblockchaininfo')
+                console.log('ERROR: ' +  error)
                 reject(error)
             })
         })

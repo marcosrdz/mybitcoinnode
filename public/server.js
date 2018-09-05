@@ -54,6 +54,14 @@ sysInfo.currentLoad().then(response => {
 /* */
 
 function formatBytes(a,b){if(0==a)return"0 Bytes";var c=1024,d=b||2,e=["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"],f=Math.floor(Math.log(a)/Math.log(c));return parseFloat((a/Math.pow(c,f)).toFixed(d))+" "+e[f]}
+
+function bitcoinConfigFilePath() {
+    const configJSON = fs.readFileSync("config.json", 'utf8')
+    return configJSON.bitcoinConfPath
+}
+
+
+console.log(bitcoinConfigFilePath())
 console.log('Bitseed Web UI server is now running. Waiting for requests...')
 const server = http.createServer((request, response) => {
     response.setHeader('Access-Control-Allow-Origin', '*')
@@ -125,10 +133,7 @@ const server = http.createServer((request, response) => {
 
                 fs.readFile(bitcoinConfPath, 'utf8', (error, existingData) => {
                     if (error) {
-                        const newData = `
-                            rpcport=8332 \n
-                            rpcuser = ${rpcuser} \n 
-                            rpcpassword = ${rpcpassword}
+                        const newData = `rpcport=8332 \nrpcuser = ${rpcuser} \nrpcpassword = ${rpcpassword}
                             `
                         fs.writeFile(bitcoinConfPath, newData, (err) => {
                             if (err) throw err
@@ -200,7 +205,7 @@ const server = http.createServer((request, response) => {
             }))
         } else if (request.url === '/bitcoinConf') {
             response.setHeader('Content-Type', 'application/json')
-            let configurationFile = fs.readFileSync("./bitcoin.conf", "utf8").split('\n')
+            let configurationFile = fs.readFileSync(bitcoinConfigFilePath(), "utf8").split('\n')
 
             let confJSON = { bitcoinConfPath: './bitcoin.conf'}
             for (const [index, value] of configurationFile.entries()) {
@@ -237,7 +242,7 @@ wsServer = new webSocket({
 })
 
 function originIsAllowed(origin) {
-  return true
+  return origin === "http://localhost:3000" || origin  === "http://localhost:80"
 }
 
 wsServer.on('request', (request) => {
@@ -268,7 +273,7 @@ wsServer.on('request', (request) => {
     })
 })
 
-aapp.use(express.static(__dirname))
-app.listen(80)
+app.use(express.static(__dirname))
+//app.listen(80)
 
 /* */

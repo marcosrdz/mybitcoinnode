@@ -1,55 +1,40 @@
 
 
 import React, { Component } from 'react'
-import { Panel, Button, ProgressBar } from 'react-bootstrap'
+import { Alert, Button, Col, Row, PageHeader, ProgressBar } from 'react-bootstrap'
 import APIClient from '../APIClient'
 import Grid from 'react-css-grid'
+import { PulseLoader } from 'react-spinners'
 
 export default class BitcoinPanel extends Component {
 
   state = {
-    panelConfiguration: {
-      panelBodyPendingText: '',
-      panelBodyPendingTextHidden: false,
-      panelHeaderButton: {
-        panelHeaderButtonButtonStyle: 'primary',
-        panelHeaderButtonText: 'Loading...',
-        panelHeaderButtonDisabled: true,
-        panelHeaderButtonHidden: true,
-        panelHeaderButtonOnPress: () => {}
-      }
-    },
-    pruned: false, 
-    isBitcoinDaemonStatusLoading: true,
-    blocks: '', 
-    headers: '',
-    connectedPeers: '',
-    btcCoreVersion: '',
-    minrelaytxfee: '',
-    publicIPAddress: '',
-    txmempool: ''
+    panelHeaderShowLoadingIndicator: true,
+    panelHeaderButtonButtonStyle: 'primary',
+    panelHeaderButtonDisabled: true,
+    panelHeaderButtonHidden: true,
+    panelHeaderButtonOnPress: () => {},
+    pruned: undefined, 
+    blocks: '0', 
+    headers: undefined,
+    connectedPeers: undefined,
+    btcCoreVersion: undefined,
+    minrelaytxfee: undefined,
+    txmempool: undefined,
+    showNetworkConnectionErrorAlert: false,
+    showLoadingBlockIndexAlert: false,
+    showInitialDownloadAlert: false
   }
 
   getNodeToShutDown() {
-    this.setState(
-      {
-        panelConfiguration: {
-          panelBodyPendingText: 'Shutting down Bitcoin Server...',
-          panelBodyPendingTextHidden: false,
-          panelHeaderButton: {
-            panelHeaderButtonHidden: true
-          }
-        }
+    this.setState({
+      panelHeaderShowLoadingIndicator: true,
+      panelHeaderButtonHidden: true
     }, () => {
         APIClient.stopDaemon().then((response) => {
           this.setState({
-            panelConfiguration: {
-              panelBodyPendingText: 'Bitcoin Server RPC is not reachable.',
-              panelBodyPendingTextHidden: false,
-              panelHeaderButton: {
-                panelHeaderButtonHidden: true
-              }
-            }
+            panelHeaderShowLoadingIndicator: false,
+            panelHeaderButtonHidden: true
           })
         })
       }
@@ -57,83 +42,87 @@ export default class BitcoinPanel extends Component {
   }
 
   getNetworkInformation() {
-    const promises = [
-      APIClient.getBlockchainInformation(), 
-      APIClient.getNetworkInfo(), 
-      APIClient.getMempoolInfo(),
-      APIClient.getBlockCountFromBlockExplorer()
-    ]
-    Promise.all(promises).then((data) => {
-      this.setState({
-        headers: data[3].blockcount,
-        blocks: data[0].result.blocks,
-        btcCoreVersion: data[1].result.subversion,
-        connectedPeers: data[1].result.connections,
-        relayfee: data[1].result.relayfee,
-        txmempool: data[2].result.size,
-        minrelaytxfee: data[2].result.minrelaytxfee,
+    this.setState({ 
+      showNetworkConnectionErrorAlert: false,
+      showLoadingBlockIndexAlert: false
+    }, () => {
+      Promise.all([
+        APIClient.getNetworkInfo(), 
+        APIClient.getBlockchainInformation(), 
+        APIClient.getBlockCountFromBlockExplorer(), 
+        APIClient.getMempoolInfo()])
+        .then((values) => {
+          console.log('All API Calls completed successfully.')
+          console.log(values)
+          this.setState({
+            btcCoreVersion: values[0].result.subversion,
+            connectedPeers: values[0].result.connections,
+            relayfee: values[0].result.relayfee,
+            blocks: values[1].result.blocks,
+            pruned: values[1].result.pruned,
+            showInitialDownloadAlert: values[1].result.initialblockdownload,
+            headers: values[2].blockcount,
+            minrelaytxfee: values[3].result.minrelaytxfee,
+            panelHeaderShowLoadingIndicator: false,         
+            showNetworkConnectionErrorAlert: false,    
+            showLoadingBlockIndexAlert: false   
+          })
+      }).catch(error => {
+        console.log('There was an error with 1 or more API calls.')
+        console.log(error)
+        this.setState({ 
+          panelHeaderShowLoadingIndicator: false, 
+          showNetworkConnectionErrorAlert: true,
+          showLoadingBlockIndexAlert: false   
+        })
       })
     })
   }
 
   getNodeStatus() {
-    APIClient.getPingResult().then((data) => {   
+    APIClient.getPingResult().then((data) => { 
       if (data.error !== null && data.error.code === -28) {
         this.setState({
-          panelConfiguration : {
-            panelBodyPendingText: 'Shutting down Bitcoin Server...',
-            panelBodyPendingTextHidden: false,
-            panelHeaderButton: {
-              panelHeaderButtonHidden: true
-            }
-          }
+          panelHeaderShowLoadingIndicator: true,
+          panelHeaderButtonHidden: true,
+          showNetworkConnectionErrorAlert: false,
+          showLoadingBlockIndexAlert: true
         })
       } else {
         this.setState({
-          panelConfiguration : {
-            panelBodyPendingTextHidden: true,
-            panelHeaderButton: {
-              panelHeaderButtonButtonStyle: 'danger',
-              panelHeaderButtonHidden: false,
-              panelHeaderButtonText: 'Stop',
-              panelHeaderButtonOnPress: () => { 
-                if (window.confirm('Are you sure you wish to shut down your Bitcoin Server?')) this.getNodeToShutDown()             
-              }
-            }
+          showNetworkConnectionErrorAlert: false,
+          showLoadingBlockIndexAlert: false,
+          panelHeaderShowLoadingIndicator: true,
+          panelHeaderButtonButtonStyle: 'danger',
+          panelHeaderButtonHidden: true,
+          panelHeaderButtonText: 'Stop',
+          panelHeaderButtonOnPress: () => { 
+            if (window.confirm('Are you sure you wish to shut down your Bitcoin Server?')) this.getNodeToShutDown()             
           }
         }, () => this.getNetworkInformation())
       }
     }).catch((error) => {
       if (error.name === 'TypeError') {
         this.setState({
-          panelConfiguration : {
             panelBodyPendingText: 'The provided host name is not reachable.',
             panelBodyPendingTextHidden: false,
-            panelHeaderButton: {
-              panelHeaderButtonHidden: true,
-            }
-          }
+            panelHeaderShowLoadingIndicator: false,
+            panelHeaderButtonHidden: true,
         })
       }
       else if (error.statusCode === 502) {
         this.setState({
-          panelConfiguration : {
             panelBodyPendingText: 'At startup, Bitcoin requires 10-15 minutes to check its database and the web UI can be active. Please wait 10-15 minutes.',
             panelBodyPendingTextHidden: false,
-            panelHeaderButton: {
-              panelHeaderButtonHidden: true,
-            }
-          }
+            panelHeaderShowLoadingIndicator: false,
+            panelHeaderButtonHidden: true,
         })
       } else {
         this.setState({
-          panelConfiguration : {
             panelBodyPendingText: 'The provided credentials are not authorized to access this server. Please, go to settings and double check your credentials.',
             panelBodyPendingTextHidden: false,
-            panelHeaderButton: {
-              panelHeaderButtonHidden: true          
-            }
-          }
+            panelHeaderShowLoadingIndicator: false,
+            panelHeaderButtonHidden: true          
         })
       }
     })  
@@ -144,7 +133,6 @@ export default class BitcoinPanel extends Component {
   }
 
   componentDidMount() {
-   // this.interval = setInterval(() => this.getNetworkInformation(), 1000)
     this.getNodeStatus()
   }
 
@@ -167,7 +155,6 @@ export default class BitcoinPanel extends Component {
         <span style={{ fontWeight: 'bold', textAlign: 'left'}}>{title}</span>
         <span style={{ textAlign: 'right'}}><ProgressBar active striped now={(this.state.blocks/this.state.headers)*100} label={`${ ((this.state.blocks/this.state.headers)*100).toFixed(2)}%`}/>
         <span style={{ textAlign: 'right'}}>{this.state.blocks} of {this.state.headers}</span>
-
         </span>
         </Grid>
         <br />
@@ -175,67 +162,74 @@ export default class BitcoinPanel extends Component {
     )
   }
 
-  renderLoadingIndicatorOrData() {
-    const panelConfiguration = this.state.panelConfiguration
+  renderData() {
+    console.log(this.state)
+    return(
+      <React.Fragment>
+        {(this.state.btcCoreVersion !== undefined) && this.renderRowWithColumn('Bitcoin Core Version', this.state.btcCoreVersion)}
+        {(this.state.pruned !== undefined) && this.renderRowWithColumn('Node Type', this.state.pruned === false ? 'Full Node' : 'Pruned')}
+        {(this.state.blocks !== undefined && this.state.headers !== undefined) && this.renderBlockRowWithColumn('Block Status', this.state.blocks)}
+        {(this.state.connectedPeers !== undefined) && this.renderRowWithColumn('Peer Connection', this.state.connectedPeers)}
+        {(this.state.txmempool !== undefined) && this.renderRowWithColumn('Tx in Mempool', this.state.txmempool)}
+        {(this.state.minrelaytxfee !== undefined) && this.renderRowWithColumn('Minimum Relay Fee', this.state.minrelaytxfee)}
+      </React.Fragment>
+    )
+  }
 
-    if (!panelConfiguration.panelBodyPendingTextHidden) {
-      return(
-        <React.Fragment>
-          {panelConfiguration.panelBodyPendingText}
+  networkConnectionErrorAlert() {
+    return(
+      <React.Fragment>
+        <Alert bsStyle="danger">
+            <h4>Network Error</h4>
+            <p>
+              An error was encountered when attempting to collect the information related to your Bitcoin node.
+            </p>
+            <p>
+              <Button bsStyle="danger" onClick={() => this.getNodeStatus()}>Retry</Button>
+            </p>
+          </Alert>
         </React.Fragment>
-      )
-    } else {
-      return(
-        <React.Fragment>
-          {this.renderRowWithColumn('Bitcoin Core Version', this.state.btcCoreVersion)}
-          {this.renderRowWithColumn('Node Type', this.state.pruned === false ? 'Full Node' : 'Pruned')}
-          {this.renderBlockRowWithColumn('Block Status', this.state.blocks)}
-          {this.renderRowWithColumn('Peer Connection', this.state.connectedPeers)}
-          {this.renderRowWithColumn('Tx in Mempool', this.state.txmempool)}
-          {this.renderRowWithColumn('Minimum Relay Fee', this.state.minrelaytxfee)}
-        </React.Fragment>
-      )
-    }
+    )
+  }
+
+  loadingBlockIndexAlert() {
+    return(
+      <React.Fragment>
+        <Alert bsStyle="warning">
+        <strong>Loading block index...</strong>
+          </Alert>
+      </React.Fragment>
+    )
+  }
+
+  initialDownloadAlert() {
+    return(
+      <React.Fragment>
+        <Alert bsStyle="warning">
+        <strong>This is the initial download of all blocks. This could take a very long time, depending on your connection speed and node performance.</strong>
+        </Alert>
+      </React.Fragment>
+    )
   }
 
   render() {
-    /*
-    panelConfiguration: {
-      panelBodyPendingText: String,
-      panelBodyPendingTextHidden: Bool,
-      panelHeaderButton: {
-        panelHeaderButtonButtonStyle: String,
-        panelHeaderButtonText: String,
-        panelHeaderButtonDisabled: Boolean,
-        panelHeaderButtonHidden: Boolean,
-      }
-    }
-    */
-    const panelConfiguration = this.state.panelConfiguration
     return (
       <div style={{ textAlign: 'center'}}>
         <div style={{ width: '600px',   marginLeft: 'auto', marginRight: 'auto', textAlign: 'left'}}>
-        <Grid>
-          <Panel>
-              <Panel.Heading>
-              <Grid width={96} gap={240} align='center'>
-                  <Panel.Title>Bitcoin Daemon Status</Panel.Title>
-                  { (!panelConfiguration.panelHeaderButton.panelHeaderButtonHidden) &&
-                    <Button
-                      bsStyle={panelConfiguration.panelHeaderButton.panelHeaderButtonButtonStyle}
-                      disabled={panelConfiguration.panelHeaderButton.panelHeaderButtonDisabled}
-                      onClick={panelConfiguration.panelHeaderButton.panelHeaderButtonOnPress}
-                    >
-                    {panelConfiguration.panelHeaderButton.panelHeaderButtonText}
-                    </Button>
-                  }
-                </Grid>
-              </Panel.Heading>
-              <Panel.Body>
-                  {this.renderLoadingIndicatorOrData()}
-            </Panel.Body>        
-            </Panel>
-          </Grid>
+        <PageHeader>
+          <Row className="show-grid">
+            <Col xs={12} md={10}>
+                Bitcoin <small>Daemon Status</small>
+              </Col>
+            <Col xsHidden md={2}>
+                <PulseLoader sizeUnit={"px"} size={10} color={'#9B9B9B'} loading={this.state.panelHeaderShowLoadingIndicator} />
+            </Col>
+          </Row>
+        </PageHeader>
+        {this.state.showNetworkConnectionErrorAlert && this.networkConnectionErrorAlert()}
+        {this.state.showLoadingBlockIndexAlert && this.loadingBlockIndexAlert()}
+        {this.state.showInitialDownloadAlert && this.initialDownloadAlert()}
+        {this.renderData()}
         </div>
       </div>
     )

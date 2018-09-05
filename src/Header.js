@@ -21,6 +21,11 @@ class Header extends Component {
                     Bitcoin
                     </NavItem>
                 </LinkContainer>
+                <LinkContainer to="/lightning">        
+                    <NavItem eventKey={3}>
+                    Lightning
+                    </NavItem>
+                </LinkContainer>
                 <LinkContainer to="/electrum">        
                     <NavItem eventKey={2}>
                     Electrum

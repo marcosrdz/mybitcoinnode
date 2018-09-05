@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import Header from './Header'
 import AlertServerNotRunning from './Common/AlertServerNotRunning'
 import Bitcoin from './Bitcoin'
+import Lightning from './Lightning'
 import Electrum from './Electrum'
 import Explorer from './Explorer'
 import Device from './Device'
@@ -47,6 +48,7 @@ class App extends Component {
         { this.state.showServerAlert && <AlertServerNotRunning />}
         <Switch>
         <Route exact path='/bitcoin' component={Bitcoin} />
+        <Route exact path='/lightning' component={Lightning} />
         <Route exact path='/electrum' component={Electrum} />
         <Route exact path='/explorer' component={Explorer} />
         <Route exact path='/device' component={Device} />
