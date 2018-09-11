@@ -1,9 +1,10 @@
 
 
 import React, { Component } from 'react'
-import { Panel, Button } from 'react-bootstrap'
+import { Button } from 'reactstrap'
 import APIClient from '../APIClient'
 import Grid from 'react-css-grid'
+import PanelHeader from './PanelHeader'
 
 export default class AddressesPanel extends Component {
 
@@ -203,30 +204,8 @@ export default class AddressesPanel extends Component {
     return (
       <div style={{ textAlign: 'center'}}>
         <div style={{ width: '600px',   marginLeft: 'auto', marginRight: 'auto', textAlign: 'left'}}>
-        <Grid>
-          <Panel>
-              <Panel.Heading>
-              <Grid width={96} gap={0} align='center'>
-                  <Panel.Title>Your Addresses</Panel.Title>
-                  <Grid width={20} gap={90} align='right'>
-
-                  { !panelConfiguration.panelHeaderButton.panelHeaderButtonHidden &&
-                  <Button
-                      bsStyle={panelConfiguration.panelHeaderButton.panelHeaderButtonButtonStyle}
-                      disabled={panelConfiguration.panelHeaderButton.panelHeaderButtonDisabled}
-                      onClick={panelConfiguration.panelHeaderButton.panelHeaderButtonOnPress}
-                    >
-                    {panelConfiguration.panelHeaderButton.panelHeaderButtonText}
-                    </Button>
-                  }
-                  </Grid>
-                </Grid>
-              </Panel.Heading>
-              <Panel.Body>
-                {this.renderPanelBody()}
-            </Panel.Body>        
-            </Panel>
-          </Grid>
+        <PanelHeader title="Addresses" subtitle="" showLoadingIndicator={this.state.panelHeaderShowLoadingIndicator} />
+        {this.renderPanelBody()}
         </div>
       </div>
     )

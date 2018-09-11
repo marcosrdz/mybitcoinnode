@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
-import { Alert } from 'react-bootstrap'
+import { Alert } from 'reactstrap'
 
 
 export default class AlertServerNotRunning extends Component {
   render() {
     return (
       <div style={{marginRight: '5em', marginLeft: '5em'}}>
-        <Alert bsStyle="danger">
+        <Alert color="danger">
           <h4>Bitseed Web Server is not reachable.</h4>
           <p>
             We were unable to communicate with the Bitseed Web Server. This server provides the information needed to display, and run some actions on your Bitseed Bitcoin node.

@@ -1,14 +1,16 @@
 
 
 import React, { Component } from 'react'
-import { PageHeader, Button, ControlLabel, FormGroup, FormControl, Form, Col } from 'react-bootstrap'
+import { Button, FormGroup, Input, Form, Col } from 'reactstrap'
 import APIClient from '../APIClient'
+import PanelHeader from './PanelHeader'
 
 export default class BitcoinSettingsPanel extends Component {
 
   constructor(props) {
     super()
     this.state = {
+      panelHeaderShowLoadingIndicator: false,
       bitcoinRPCUser: '',
       bitcoinRPCPassword: '',
       bitcoinConfPath: '',
@@ -55,32 +57,32 @@ export default class BitcoinSettingsPanel extends Component {
     return (
       <div style={{ textAlign: 'center'}}>
         <div style={{ width: '600px',   marginLeft: 'auto', marginRight: 'auto', textAlign: 'left'}}>
-          <PageHeader>Bitcoin Server Settings</PageHeader>
+        <PanelHeader title="Bitcoin" subtitle="Server Settings" showLoadingIndicator={this.state.panelHeaderShowLoadingIndicator} />
                 <Form horizontal onSubmit={this.submitPressed}>
                 <FormGroup controlId="bitcoinConfPath">
-                    <Col componentClass={ControlLabel} sm={3}>
+                    <Col sm={3}>
                       bitcoin.conf Path
                     </Col>
                     <Col sm={9}>
-                      <FormControl disabled={this.state.isLoading} type="text" placeholder="/home/bitcoin/.bitcoin/bitcoin.conf" value={this.state.bitcoinConfPath} onChange={this.handleChange} />
+                      <Input disabled={this.state.isLoading} type="text" placeholder="/home/bitcoin/.bitcoin/bitcoin.conf" value={this.state.bitcoinConfPath} onChange={this.handleChange} />
                     </Col>
                   </FormGroup>
 
                   <FormGroup controlId="bitcoinRPCUser">
-                    <Col componentClass={ControlLabel} sm={3}>
+                    <Col sm={3}>
                       RPC Username
                     </Col>
                     <Col sm={9}>
-                      <FormControl disabled={this.state.isLoading}  type="text" placeholder="bitcoinrpc" value={this.state.bitcoinRPCUser} onChange={this.handleChange} />
+                      <Input disabled={this.state.isLoading}  type="text" placeholder="bitcoinrpc" value={this.state.bitcoinRPCUser} onChange={this.handleChange} />
                     </Col>
                   </FormGroup>
 
                   <FormGroup controlId="bitcoinRPCPassword">
-                    <Col componentClass={ControlLabel} sm={3}>
+                    <Col sm={3}>
                       RPC Password
                     </Col>
                     <Col sm={9}>
-                      <FormControl disabled={this.state.isLoading}  type="text" placeholder="bitseed" value={this.state.bitcoinRPCPassword} onChange={this.handleChange} />
+                      <Input disabled={this.state.isLoading}  type="text" placeholder="bitseed" value={this.state.bitcoinRPCPassword} onChange={this.handleChange} />
                     </Col>
                   </FormGroup>
 

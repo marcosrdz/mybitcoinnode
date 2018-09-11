@@ -1,7 +1,7 @@
 
 
 import React, { Component } from 'react'
-import { Alert, Button, ProgressBar } from 'react-bootstrap'
+import { Alert, Button, Progress } from 'reactstrap'
 import PanelHeader from './PanelHeader'
 import APIClient from '../APIClient'
 import Grid from 'react-css-grid'
@@ -23,7 +23,9 @@ export default class BitcoinPanel extends Component {
     txmempool: undefined,
     showNetworkConnectionErrorAlert: false,
     showLoadingBlockIndexAlert: false,
-    showInitialDownloadAlert: false
+    loadingBlockIndexAlertText: 'Loading block index...',
+    showInitialDownloadAlert: false,
+    networkErrorAlertMessage: "The network connection was lost when attempting to collect the information from your node. This may be due to your node being under heavy load.    "
   }
 
   getNodeToShutDown() {
@@ -87,7 +89,8 @@ export default class BitcoinPanel extends Component {
           panelHeaderShowLoadingIndicator: true,
           panelHeaderButtonHidden: true,
           showNetworkConnectionErrorAlert: false,
-          showLoadingBlockIndexAlert: true
+          showLoadingBlockIndexAlert: true,
+          loadingBlockIndexAlertText: data.error.message
         })
       } else {
         this.setState({
@@ -113,10 +116,10 @@ export default class BitcoinPanel extends Component {
       }
       else if (error.statusCode === 502) {
         this.setState({
-            panelBodyPendingText: 'At startup, Bitcoin requires 10-15 minutes to check its database and the web UI can be active. Please wait 10-15 minutes.',
-            panelBodyPendingTextHidden: false,
+            networkErrorAlertMessage: 'The Bitcoin Daemon seems to be unresponsive.',
             panelHeaderShowLoadingIndicator: false,
-            panelHeaderButtonHidden: true,
+            showInitialDownloadAlert: false,
+            showNetworkConnectionErrorAlert: true
         })
       } else {
         this.setState({
@@ -154,7 +157,7 @@ export default class BitcoinPanel extends Component {
       <React.Fragment>
         <Grid width={20}>
         <span style={{ fontWeight: 'bold', textAlign: 'left'}}>{title}</span>
-        <span style={{ textAlign: 'right'}}><ProgressBar active striped now={(this.state.blocks/this.state.headers)*100} label={`${ ((this.state.blocks/this.state.headers)*100).toFixed(2)}%`}/>
+        <span style={{ textAlign: 'right'}}><Progress animated color="info" value={(this.state.blocks/this.state.headers)*100}>{((this.state.blocks/this.state.headers)*100).toFixed(2)}%</Progress>
         <span style={{ textAlign: 'right'}}>{this.state.blocks} of {this.state.headers}</span>
         </span>
         </Grid>
@@ -180,13 +183,13 @@ export default class BitcoinPanel extends Component {
   networkConnectionErrorAlert() {
     return(
       <React.Fragment>
-        <Alert bsStyle="danger">
+        <Alert color="danger">
             <h4>Network Error</h4>
             <p>
-              The network connection was lost when attempting to collect the information from your node. This may be due to your node being under heavy load.
+            {this.state.networkErrorAlertMessage}
             </p>
             <p>
-              <Button bsStyle="danger" onClick={() => this.getNodeStatus()}>Retry</Button>
+              <Button color="danger" onClick={() => this.getNodeStatus()}>Retry</Button>
             </p>
           </Alert>
         </React.Fragment>
@@ -196,7 +199,7 @@ export default class BitcoinPanel extends Component {
   loadingBlockIndexAlert() {
     return(
       <React.Fragment>
-        <Alert bsStyle="warning">
+        <Alert color="primary">
         <strong>Loading block index...</strong>
           </Alert>
       </React.Fragment>
@@ -206,7 +209,7 @@ export default class BitcoinPanel extends Component {
   initialDownloadAlert() {
     return(
       <React.Fragment>
-        <Alert bsStyle="warning">
+        <Alert color="primary">
         <strong>This is the initial download of all blocks. This could take a very long time, depending on your connection speed and node performance.</strong>
         </Alert>
       </React.Fragment>

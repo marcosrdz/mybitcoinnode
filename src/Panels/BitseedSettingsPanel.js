@@ -1,9 +1,10 @@
 
 
 import React, { Component } from 'react'
-import { Button, ControlLabel, FormGroup, FormControl, Form, Col, HelpBlock, PageHeader } from 'react-bootstrap'
+import { Button, FormGroup, Input, Form, Col, FormText } from 'reactstrap'
 import APIClient from '../APIClient'
 import Grid from 'react-css-grid'
+import PanelHeader from './PanelHeader'
 
 export default class BitseedSettingsPanel extends Component {
 
@@ -60,42 +61,44 @@ export default class BitseedSettingsPanel extends Component {
     return (
       <div style={{ textAlign: 'center'}}>
         <div style={{ width: '600px',   marginLeft: 'auto', marginRight: 'auto', textAlign: 'left'}}>
-        <PageHeader>Bitseed Web UI</PageHeader>
+        <PanelHeader title="Bitseed" subtitle="Settings" showLoadingIndicator={this.state.panelHeaderShowLoadingIndicator} />
                 <Form horizontal onSubmit={this.submitPressed}>
                 <FormGroup controlId="webUIBitcoinRPCHost">
-                    <Col componentClass={ControlLabel} sm={3}>
+                    <Col sm={3}>
                       RPC Host
                     </Col>
                     <Col sm={9}>
-                      <FormControl type="text" placeholder="localhost" value={this.state.data.webUIBitcoinRPCHost} onChange={this.handleChange} disabled={this.state.isLoading} />
-                      <HelpBlock>If your Bitcoin Server is not hosted in the same machine as this web UI, you may use tools such as <a href="https://www.npmjs.com/package/corsproxy"><strong>corsproxy</strong></a>.</HelpBlock>
+                      <Input type="text" placeholder="localhost" value={this.state.data.webUIBitcoinRPCHost} onChange={this.handleChange} disabled={this.state.isLoading} />
+                      <FormText color="muted">
+                      If your Bitcoin Server is not hosted in the same machine as this web UI, you may use tools such as <a href="https://www.npmjs.com/package/corsproxy"><strong>corsproxy</strong></a>.
+                      </FormText>
                     </Col>
                   </FormGroup>
 
                   <FormGroup controlId="webUIBitcoinRPCPort">
-                    <Col componentClass={ControlLabel} sm={3}>
+                    <Col sm={3}>
                       RPC Port
                     </Col>
                     <Col sm={2}>
-                      <FormControl type="text" placeholder="8332" value={this.state.data.webUIBitcoinRPCPort} onChange={this.handleChange} disabled={this.state.isLoading} />
+                      <Input type="text" placeholder="8332" value={this.state.data.webUIBitcoinRPCPort} onChange={this.handleChange} disabled={this.state.isLoading} />
                     </Col>
                   </FormGroup>
   
                   <FormGroup controlId="webUIBitcoinRPCUser">
-                    <Col componentClass={ControlLabel} sm={3}>
+                    <Col sm={3}>
                       RPC Username
                     </Col>
                     <Col sm={9}>
-                      <FormControl type="text" placeholder="bitcoinrpc" value={this.state.data.webUIBitcoinRPCUser} onChange={this.handleChange} disabled={this.state.isLoading} />
+                      <Input type="text" placeholder="bitcoinrpc" value={this.state.data.webUIBitcoinRPCUser} onChange={this.handleChange} disabled={this.state.isLoading} />
                     </Col>
                   </FormGroup>
 
                   <FormGroup controlId="webUIBitcoinRPCPassword">
-                    <Col componentClass={ControlLabel} sm={3}>
+                    <Col sm={3}>
                       RPC Password
                     </Col>
                     <Col sm={9}>
-                      <FormControl type="text" placeholder="bitseed" value={this.state.data.webUIBitcoinRPCPassword} onChange={this.handleChange} disabled={this.state.isLoading} />
+                      <Input type="text" placeholder="bitseed" value={this.state.data.webUIBitcoinRPCPassword} onChange={this.handleChange} disabled={this.state.isLoading} />
                     </Col>
                   </FormGroup>
 

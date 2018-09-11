@@ -1,9 +1,10 @@
 
 
 import React, { Component } from 'react'
-import { Panel, Button } from 'react-bootstrap'
+import { Button } from 'reactstrap'
 import APIClient from '../APIClient'
 import Grid from 'react-css-grid'
+import PanelHeader from './PanelHeader'
 
 export default class DeviceInformationPanel extends Component {
 
@@ -19,7 +20,8 @@ export default class DeviceInformationPanel extends Component {
     ramUsed: '',
     ramFree: '',
     cpuLoad: '',
-    deviceID: ''
+    deviceID: '',
+    panelHeaderShowLoadingIndicator: false
   }
 
   getNodeToShutDown() {
@@ -101,18 +103,8 @@ export default class DeviceInformationPanel extends Component {
     return (
       <div style={{ textAlign: 'center'}}>
         <div style={{ width: '600px',   marginLeft: 'auto', marginRight: 'auto', textAlign: 'left'}}>
-        <Grid>
-          <Panel>
-              <Panel.Heading>
-              <Grid width={96} gap={240} align='center'>
-                  <Panel.Title>Device Information</Panel.Title>
-                </Grid>
-              </Panel.Heading>
-              <Panel.Body>
-                  {this.renderLoadingIndicatorOrData()}
-            </Panel.Body>        
-            </Panel>
-          </Grid>
+        <PanelHeader title="Device" subtitle="Information" showLoadingIndicator={this.state.panelHeaderShowLoadingIndicator} />
+        {this.renderLoadingIndicatorOrData()}        
         </div>
       </div>
     )

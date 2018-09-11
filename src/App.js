@@ -45,7 +45,9 @@ class App extends Component {
       <Router> 
         <React.Fragment>       
         <Header />
+        <br />
         { this.state.showServerAlert && <AlertServerNotRunning />}
+        <br />
         <Switch>
         <Route exact path='/bitcoin' component={Bitcoin} />
         <Route exact path='/lightning' component={Lightning} />
