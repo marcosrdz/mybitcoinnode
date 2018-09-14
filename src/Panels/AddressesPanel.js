@@ -9,6 +9,7 @@ import PanelHeader from './PanelHeader'
 export default class AddressesPanel extends Component {
 
     state = {
+      panelHeaderShowLoadingIndicator: false,
         panelConfiguration: {
             panelBodyPendingText: '',
             panelBodyPendingTextHidden: false,
@@ -57,6 +58,7 @@ export default class AddressesPanel extends Component {
         }).catch((error) => {
           if (error.name === 'TypeError') {
             this.setState({
+              panelHeaderShowLoadingIndicator: false,
               panelConfiguration : {
                 panelBodyPendingText: 'The provided host name is not reachable.',
                 panelBodyPendingTextHidden: false,
@@ -68,6 +70,7 @@ export default class AddressesPanel extends Component {
           }
           else if (error.statusCode === 502) {
             this.setState({
+              panelHeaderShowLoadingIndicator: false,
               panelConfiguration : {
                 panelBodyPendingText: 'Bitcoin Core RPC Server is not reachable.',
                 panelBodyPendingTextHidden: false,
@@ -78,6 +81,7 @@ export default class AddressesPanel extends Component {
             })
           } else {
             this.setState({
+              panelHeaderShowLoadingIndicator: false,
               panelConfiguration : {
                 panelBodyPendingText: 'The provided credentials are not authorized to access this server. Please, go to settings and double check your credentials.',
                 panelBodyPendingTextHidden: false,
@@ -202,12 +206,13 @@ export default class AddressesPanel extends Component {
     const panelConfiguration = this.state.panelConfiguration
 
     return (
-      <div style={{ textAlign: 'center'}}>
+      <React.Fragment>
+        <PanelHeader title="Addresses" subtitle="Public Access" showLoadingIndicator={this.state.panelHeaderShowLoadingIndicator} />
+        <br/>
         <div style={{ width: '600px',   marginLeft: 'auto', marginRight: 'auto', textAlign: 'left'}}>
-        <PanelHeader title="Addresses" subtitle="" showLoadingIndicator={this.state.panelHeaderShowLoadingIndicator} />
         {this.renderPanelBody()}
         </div>
-      </div>
+      </React.Fragment>
     )
   }
 }

@@ -5,10 +5,11 @@ import DeviceInformationPanel from './Panels/DeviceInformationPanel'
 export default class Device extends Component {
   render() {
     return (
-      <div>
+      <React.Fragment>
         <DeviceInformationPanel />
+        <br />
         <AddressesPanel />
-      </div>
+      </React.Fragment>
     )
   }
 }

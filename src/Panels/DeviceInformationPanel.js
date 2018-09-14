@@ -101,12 +101,13 @@ export default class DeviceInformationPanel extends Component {
 
   render() {
     return (
-      <div style={{ textAlign: 'center'}}>
+      <React.Fragment >
+        <PanelHeader title="Device" subtitle="Your Node" showLoadingIndicator={this.state.panelHeaderShowLoadingIndicator} />
+        <br />
         <div style={{ width: '600px',   marginLeft: 'auto', marginRight: 'auto', textAlign: 'left'}}>
-        <PanelHeader title="Device" subtitle="Information" showLoadingIndicator={this.state.panelHeaderShowLoadingIndicator} />
         {this.renderLoadingIndicatorOrData()}        
         </div>
-      </div>
+      </React.Fragment>
     )
   }
 }
