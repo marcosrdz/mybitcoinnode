@@ -1,9 +1,8 @@
 
 
 import React, { Component } from 'react'
-import { Button } from 'reactstrap'
+import { Container, Row, Col, Progress } from 'reactstrap'
 import APIClient from '../APIClient'
-import Grid from 'react-css-grid'
 import PanelHeader from './PanelHeader'
 
 export default class DeviceInformationPanel extends Component {
@@ -16,9 +15,12 @@ export default class DeviceInformationPanel extends Component {
     uptime: '',
     diskSize: '',
     diskSpaceAvailable: '',
-    diskSpaceUsed: '',    
+    diskSpaceUsed: '', 
+    diskSpaceUsedFormatted: '',   
     ramUsed: '',
     ramFree: '',
+    ramTotal: '',
+    ramUsedPercentage: '',
     cpuLoad: '',
     deviceID: '',
     panelHeaderShowLoadingIndicator: false
@@ -57,8 +59,11 @@ export default class DeviceInformationPanel extends Component {
         diskSize: response.diskSize,
         diskSpaceAvailable: response.diskSpaceAvailable,
         diskSpaceUsed: response.diskSpaceUsed,
+        diskSpaceUsedFormatted: response.diskSpaceUsedFormatted,
         ramUsed: response.ramUsed,
         ramFree: response.ramFree,
+        ramTotal: response.ramTotal,
+        ramUsedPercentage: response.ramUsedPercentage,
         cpuLoad: response.cpuLoad
       })
     })
@@ -76,10 +81,46 @@ export default class DeviceInformationPanel extends Component {
   renderRowWithColumn(title, description = 'No Data') {
     return(
       <React.Fragment>
-        <Grid width={96} gap={16}>
-        <span style={{ fontWeight: 'bold', textAlign: 'left'}}>{title}</span>
-        <span style={{ fontWeight: 'normal', textAlign: 'right'}}>{description}</span>
-        </Grid>
+        <Row>
+          <Col>
+            <strong>{title}</strong>
+          </Col>
+          <Col>
+            {description}
+          </Col>
+        </Row>
+        <br />
+      </React.Fragment>
+    )
+  }
+
+  renderStorageRowWithColumn(storageSize = 0, storageUsed = 0, storageAvailable = 0) {
+    return(
+      <React.Fragment>
+        <Row>
+          <Col>
+            <strong>Storage</strong>
+          </Col>
+          <Col>
+          <Progress value={storageUsed}>{this.state.diskSpaceUsedFormatted} used. {storageAvailable} available. {storageSize} total.</Progress>
+          </Col>
+        </Row>
+        <br />
+      </React.Fragment>
+    )
+  }
+
+  renderMemoryRowWithColumn(memoryTotal = 0, memoryUsed = 0, memoryFree = 0, memoryUsedPercentage = 0) {
+    return(
+      <React.Fragment>
+        <Row>
+          <Col>
+            <strong>Memory</strong>
+          </Col>
+          <Col>
+          <Progress value={memoryUsedPercentage}>{memoryUsed} used. {memoryFree} free. {memoryTotal} total.</Progress>
+          </Col>
+        </Row>
         <br />
       </React.Fragment>
     )
@@ -87,11 +128,8 @@ export default class DeviceInformationPanel extends Component {
 
   renderLoadingIndicatorOrData() {
     return(<React.Fragment>
-        {this.renderRowWithColumn('Disk Size', this.state.diskSize)}
-        {this.renderRowWithColumn('Disk Space Used', this.state.diskSpaceUsed)}
-        {this.renderRowWithColumn('Disk Space Available', this.state.diskSpaceAvailable)}
-        {this.renderRowWithColumn('RAM Used', this.state.ramUsed)}
-        {this.renderRowWithColumn('RAM Free', this.state.ramFree)}
+        {this.renderStorageRowWithColumn(this.state.diskSize, this.state.diskSpaceUsed, this.state.diskSpaceAvailable)}
+        {this.renderMemoryRowWithColumn(this.state.ramTotal, this.state.ramUsed, this.state.ramFree, this.state.ramUsedPercentage)}
         {this.renderRowWithColumn('CPU Load', this.state.cpuLoad)}
         {this.renderRowWithColumn('Uptime', this.state.uptime)}
         {this.renderRowWithColumn('Device S/N', this.state.deviceID)}
@@ -104,9 +142,9 @@ export default class DeviceInformationPanel extends Component {
       <React.Fragment >
         <PanelHeader title="Device" subtitle="Your Node" showLoadingIndicator={this.state.panelHeaderShowLoadingIndicator} />
         <br />
-        <div style={{ width: '600px',   marginLeft: 'auto', marginRight: 'auto', textAlign: 'left'}}>
+        <Container>
         {this.renderLoadingIndicatorOrData()}        
-        </div>
+        </Container>
       </React.Fragment>
     )
   }

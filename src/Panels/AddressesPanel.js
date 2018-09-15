@@ -1,9 +1,8 @@
 
 
 import React, { Component } from 'react'
-import { Button } from 'reactstrap'
+import { Container, Row, Col } from 'reactstrap'
 import APIClient from '../APIClient'
-import Grid from 'react-css-grid'
 import PanelHeader from './PanelHeader'
 
 export default class AddressesPanel extends Component {
@@ -176,42 +175,45 @@ export default class AddressesPanel extends Component {
   renderRowWithColumn(title, description = 'No Data') {
     return(
       <React.Fragment>
-        <Grid gap={0} width={0}>
+        <Row>
+        <Col>
         <span style={{ fontWeight: 'bold', textAlign: 'left'}}>{title}</span>
+        </Col>
+        <Col>
         {description.isReachable !== undefined && <span style={{ fontWeight: 'normal', textAlign: 'right'}}>{description.address} ({description.isReachable === false ? 'Not ' : null}Reachable)</span>}
         {description.isReachable === undefined && <span style={{ fontWeight: 'normal', textAlign: 'right'}}>{description.address}</span>}
-        </Grid>
+        </Col>
+        </Row>
         <br />
-      </React.Fragment>
+        </React.Fragment>
     )
   }
 
   renderPanelBody() {
       if (this.state.panelConfiguration.panelBodyPendingTextHidden) {
         return (
-            <React.Fragment>
-                {this.renderRowWithColumn('Public IPv4 Address:', this.state.publicIPv4Address)}
-                {this.renderRowWithColumn('Public IPv6 Address:', this.state.publicIPv6Address)}
-                {this.renderRowWithColumn('Public Onion Address:', this.state.publicOnionAddress)}
-                {this.renderRowWithColumn('Local Address:', this.state.localAddress)}
-                {this.renderRowWithColumn('MAC Address:', this.state.macAddress)}
-            </React.Fragment>
+          <React.Fragment>
+            {this.renderRowWithColumn('Public IPv4 Address:', this.state.publicIPv4Address)}
+            {this.renderRowWithColumn('Public IPv6 Address:', this.state.publicIPv6Address)}
+            {this.renderRowWithColumn('Public Onion Address:', this.state.publicOnionAddress)}
+            {this.renderRowWithColumn('Local Address:', this.state.localAddress)}
+            {this.renderRowWithColumn('MAC Address:', this.state.macAddress)}
+          </React.Fragment>
         )
       } else {
-          return this.state.panelConfiguration.panelBodyPendingText
+          return (<React.Fragment>{this.state.panelConfiguration.panelBodyPendingText}<br/></React.Fragment>)
       }
   }
 
   render() {
     const panelConfiguration = this.state.panelConfiguration
-
     return (
       <React.Fragment>
-        <PanelHeader title="Addresses" subtitle="Public Access" showLoadingIndicator={this.state.panelHeaderShowLoadingIndicator} />
+        <PanelHeader title="Addresses" subtitle="Your Network" showLoadingIndicator={this.state.panelHeaderShowLoadingIndicator} />
         <br/>
-        <div style={{ width: '600px',   marginLeft: 'auto', marginRight: 'auto', textAlign: 'left'}}>
-        {this.renderPanelBody()}
-        </div>
+        <Container>
+          {this.renderPanelBody()}
+        </Container>
       </React.Fragment>
     )
   }

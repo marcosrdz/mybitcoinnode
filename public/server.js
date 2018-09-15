@@ -30,7 +30,8 @@ let diskSpaceAvailable = 'No Data'
 
 sysInfo.fsSize().then(response => {
     diskSize = formatBytes(response[0].size)
-    diskSpaceUsed = `${formatBytes(response[0].used)} (${response[0].use}%)`
+    diskSpaceUsed = response[0].use
+    diskSpaceUsedFormatted = `${formatBytes(response[0].used)} (${response[0].use}%)`
     diskSpaceAvailable = formatBytes(response[0].size - response[0].used)
 })
 /* */
@@ -42,6 +43,8 @@ let ramFree = 'No Data'
 sysInfo.mem().then(response => {
     ramUsed = formatBytes(response.used)
     ramFree = formatBytes(response.free)
+    ramTotal = formatBytes(response.total)
+    ramUsedPercentage = ((response.total / response.used)*100).toFixed(2)
 })
 /*  */
 
@@ -198,9 +201,12 @@ const server = http.createServer((request, response) => {
                 macAddress: macAddress,
                 diskSize: diskSize,
                 diskSpaceUsed: diskSpaceUsed,
+                diskSpaceUsedFormatted: diskSpaceUsedFormatted,
                 diskSpaceAvailable: diskSpaceAvailable,
                 ramUsed: ramUsed,
                 ramFree: ramFree,
+                ramTotal: ramTotal,
+                ramUsedPercentage: ramUsedPercentage,
                 cpuLoad: cpuLoad
             }))
         } else if (request.url === '/bitcoinConf') {
