@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom'
 import Header from './Header'
 import AlertServerNotRunning from './Common/AlertServerNotRunning'
 import Bitcoin from './Bitcoin'
@@ -50,6 +50,7 @@ class App extends Component {
         <br />
         <Switch>
         <Route exact path='/bitcoin' component={Bitcoin} />
+        <Route exact path="/" component={() => <Redirect to="/bitcoin" />}/>
         <Route exact path='/lightning' component={Lightning} />
         <Route exact path='/electrum' component={Electrum} />
         <Route exact path='/explorer' component={Explorer} />
