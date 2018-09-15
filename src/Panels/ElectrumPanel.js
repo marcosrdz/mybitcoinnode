@@ -3,7 +3,6 @@
 import React, { Component } from 'react'
 import { Button } from 'reactstrap'
 import APIClient from '../APIClient'
-import Grid from 'react-css-grid'
 import PanelHeader from './PanelHeader'
 
 export default class ElectrumPanel extends Component {
@@ -26,7 +25,7 @@ export default class ElectrumPanel extends Component {
     return (
       <div style={{ textAlign: 'center'}}>
       <div style={{ width: '60%',   marginLeft: 'auto', marginRight: 'auto', textAlign: 'left'}}>
-      <PanelHeader title="Electrum" subtitle="Personal Server" showLoadingIndicator={this.state.panelHeaderShowLoadingIndicator} />
+      <PanelHeader title="Electrum" subtitle="Personal Server"/>
       </div>
     </div>
     )

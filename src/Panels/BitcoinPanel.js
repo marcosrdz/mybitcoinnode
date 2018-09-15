@@ -1,15 +1,15 @@
 
 
 import React, { Component } from 'react'
-import { Alert, Button, Progress } from 'reactstrap'
+import { Alert, Button, Container, Row, Col } from 'reactstrap'
 import PanelHeader from './PanelHeader'
 import APIClient from '../APIClient'
-import Grid from 'react-css-grid'
+import { PulseLoader } from 'react-spinners'
 
 export default class BitcoinPanel extends Component {
 
   state = {
-    panelHeaderShowLoadingIndicator: true,
+    showLoadingIndicator: true,
     panelHeaderButtonButtonStyle: 'primary',
     panelHeaderButtonDisabled: true,
     panelHeaderButtonHidden: true,
@@ -30,12 +30,12 @@ export default class BitcoinPanel extends Component {
 
   getNodeToShutDown() {
     this.setState({
-      panelHeaderShowLoadingIndicator: true,
+      showLoadingIndicator: true,
       panelHeaderButtonHidden: true
     }, () => {
         APIClient.stopDaemon().then((response) => {
           this.setState({
-            panelHeaderShowLoadingIndicator: false,
+            showLoadingIndicator: false,
             panelHeaderButtonHidden: true
           })
         })
@@ -66,7 +66,7 @@ export default class BitcoinPanel extends Component {
             headers: values[2].blockcount,
             minrelaytxfee: values[3].result.minrelaytxfee,
             txmempool: values[3].result.size,
-            panelHeaderShowLoadingIndicator: false,         
+            showLoadingIndicator: false,         
             showNetworkConnectionErrorAlert: false,    
             showLoadingBlockIndexAlert: false   
           })
@@ -74,7 +74,7 @@ export default class BitcoinPanel extends Component {
         console.log('There was an error with 1 or more API calls.')
         console.log(error)
         this.setState({ 
-          panelHeaderShowLoadingIndicator: false, 
+          showLoadingIndicator: false, 
           showNetworkConnectionErrorAlert: true,
           showLoadingBlockIndexAlert: false   
         })
@@ -86,7 +86,7 @@ export default class BitcoinPanel extends Component {
     APIClient.getPingResult().then((data) => { 
       if (data.error !== null && data.error.code === -28) {
         this.setState({
-          panelHeaderShowLoadingIndicator: true,
+          showLoadingIndicator: true,
           panelHeaderButtonHidden: true,
           showNetworkConnectionErrorAlert: false,
           showLoadingBlockIndexAlert: true,
@@ -96,7 +96,7 @@ export default class BitcoinPanel extends Component {
         this.setState({
           showNetworkConnectionErrorAlert: false,
           showLoadingBlockIndexAlert: false,
-          panelHeaderShowLoadingIndicator: true,
+          showLoadingIndicator: true,
           panelHeaderButtonButtonStyle: 'danger',
           panelHeaderButtonHidden: true,
           panelHeaderButtonText: 'Stop',
@@ -110,14 +110,14 @@ export default class BitcoinPanel extends Component {
         this.setState({
             panelBodyPendingText: 'The provided host name is not reachable.',
             panelBodyPendingTextHidden: false,
-            panelHeaderShowLoadingIndicator: false,
+            showLoadingIndicator: false,
             panelHeaderButtonHidden: true,
         })
       }
       else if (error.statusCode === 502) {
         this.setState({
             networkErrorAlertMessage: 'The Bitcoin Daemon seems to be unresponsive.',
-            panelHeaderShowLoadingIndicator: false,
+            showLoadingIndicator: false,
             showInitialDownloadAlert: false,
             showNetworkConnectionErrorAlert: true
         })
@@ -125,7 +125,7 @@ export default class BitcoinPanel extends Component {
         this.setState({
             panelBodyPendingText: 'The provided credentials are not authorized to access this server. Please, go to settings and double check your credentials.',
             panelBodyPendingTextHidden: false,
-            panelHeaderShowLoadingIndicator: false,
+            showLoadingIndicator: false,
             panelHeaderButtonHidden: true          
         })
       }
@@ -143,11 +143,11 @@ export default class BitcoinPanel extends Component {
   renderRowWithColumn(title, description = 'No Data') {
     return(
       <React.Fragment>
-        <Grid width={96} gap={16}>
+        {/* <Grid width={96} gap={16}>
         <span style={{ fontWeight: 'bold', textAlign: 'left'}}>{title}</span>
         <span style={{ fontWeight: 'normal', textAlign: 'right'}}>{description}</span>
         </Grid>
-        <br />
+        <br /> */}
       </React.Fragment>
     )
   }
@@ -155,13 +155,13 @@ export default class BitcoinPanel extends Component {
   renderBlockRowWithColumn(title, description = 'No Data') {
     return(
       <React.Fragment>
-        <Grid width={20}>
+        {/* <Grid width={20}>
         <span style={{ fontWeight: 'bold', textAlign: 'left'}}>{title}</span>
         <span style={{ textAlign: 'right'}}><Progress animated color="info" value={(this.state.blocks/this.state.headers)*100}>{((this.state.blocks/this.state.headers)*100).toFixed(2)}%</Progress>
         <span style={{ textAlign: 'right'}}>{this.state.blocks} of {this.state.headers}</span>
         </span>
         </Grid>
-        <br />
+        <br /> */}
       </React.Fragment>
     )
   }
@@ -216,17 +216,32 @@ export default class BitcoinPanel extends Component {
     )
   }
 
+  renderLoadingIndicator() {
+    return(
+      <React.Fragment>
+        <br/>
+        <Row className="text-center">
+          <Col>
+            <PulseLoader sizeUnit={"px"} size={10} color={'#9B9B9B'} loading={true} />
+          </Col>
+        </Row>
+        <br/>
+      </React.Fragment>
+    )
+  }
+
   render() {
     return (
-      <div style={{ textAlign: 'center'}}>
-        <div style={{ width: '60%',   marginLeft: 'auto', marginRight: 'auto', textAlign: 'left'}}>
-        <PanelHeader title="Bitcoin" subtitle="Daemon Status" showLoadingIndicator={this.state.panelHeaderShowLoadingIndicator} />
-        {this.state.showNetworkConnectionErrorAlert && this.networkConnectionErrorAlert()}
-        {this.state.showLoadingBlockIndexAlert && this.loadingBlockIndexAlert()}
-        {this.state.showInitialDownloadAlert && this.initialDownloadAlert()}
-        {this.renderData()}
-        </div>
-      </div>
+        <React.Fragment>
+          <PanelHeader title="Bitcoin" subtitle="Daemon Status" />
+          {this.state.showNetworkConnectionErrorAlert && this.networkConnectionErrorAlert()}
+          {this.state.showLoadingBlockIndexAlert && this.loadingBlockIndexAlert()}
+          {this.state.showInitialDownloadAlert && this.initialDownloadAlert()}
+          <Container>
+            {this.state.showLoadingIndicator && this.renderLoadingIndicator()}
+            {!this.state.showLoadingIndicator && this.renderData()}
+          </Container>
+      </React.Fragment>
     )
   }
 }

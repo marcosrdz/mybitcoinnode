@@ -3,7 +3,6 @@
 import React, { Component } from 'react'
 import { Button, FormGroup, Input, Form, Col, FormText } from 'reactstrap'
 import APIClient from '../APIClient'
-import Grid from 'react-css-grid'
 import PanelHeader from './PanelHeader'
 
 export default class BitseedSettingsPanel extends Component {

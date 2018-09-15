@@ -3,7 +3,6 @@
 import React, { Component } from 'react'
 import { Button } from 'reactstrap'
 import APIClient from '../APIClient'
-import Grid from 'react-css-grid'
 import PanelHeader from './PanelHeader'
 
 export default class ExplorerPanel extends Component {
@@ -26,7 +25,7 @@ export default class ExplorerPanel extends Component {
     return (
       <div style={{ textAlign: 'center'}}>
       <div style={{ width: '60%',   marginLeft: 'auto', marginRight: 'auto', textAlign: 'left'}}>
-      <PanelHeader title="Explorer" subtitle="Bitcoin Blockchain" showLoadingIndicator={this.state.panelHeaderShowLoadingIndicator} />
+      <PanelHeader title="Explorer" subtitle="Bitcoin Blockchain"/>
       </div>
     </div>
     )
