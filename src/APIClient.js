@@ -53,6 +53,8 @@ export default class APIClient {
     }
 
     static _fetchJSON(method) {
+        if (useSampleJSON) { return Promise.resolve(require(`./sampleJSON/${method}.json`))}
+
         return Promise.all([APIClient.fetchConfigurationFile()]).then((results) => { 
             const clientInfo = results[0]
             return new Promise((resolve, reject) => {
@@ -190,6 +192,8 @@ export default class APIClient {
     }
 
 }
+
+const useSampleJSON = false
 
 const responses = {
     bitcoinServerAuthenticationProvidedInvalid: 'The provided credentials are not authorized to access this server.',

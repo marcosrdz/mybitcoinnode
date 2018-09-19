@@ -1,7 +1,7 @@
 
 
 import React, { Component } from 'react'
-import { Alert, Button, Container, Row, Col } from 'reactstrap'
+import { Alert, Button, Container, Row, Col, Progress } from 'reactstrap'
 import PanelHeader from './PanelHeader'
 import APIClient from '../APIClient'
 import { PulseLoader } from 'react-spinners'
@@ -83,6 +83,7 @@ export default class BitcoinPanel extends Component {
   }
 
   getNodeStatus() {
+    console.log('Getting node status...')
     APIClient.getPingResult().then((data) => { 
       if (data.error !== null && data.error.code === -28) {
         this.setState({
@@ -108,10 +109,11 @@ export default class BitcoinPanel extends Component {
     }).catch((error) => {
       if (error.name === 'TypeError') {
         this.setState({
-            panelBodyPendingText: 'The provided host name is not reachable.',
-            panelBodyPendingTextHidden: false,
-            showLoadingIndicator: false,
+            networkErrorAlertMessage: 'The provided host name is not reachable.',
             panelHeaderButtonHidden: true,
+            showLoadingIndicator: false,
+            showNetworkConnectionErrorAlert: true,
+            showLoadingBlockIndexAlert: false,
         })
       }
       else if (error.statusCode === 502) {
@@ -119,14 +121,16 @@ export default class BitcoinPanel extends Component {
             networkErrorAlertMessage: 'The Bitcoin Daemon seems to be unresponsive.',
             showLoadingIndicator: false,
             showInitialDownloadAlert: false,
-            showNetworkConnectionErrorAlert: true
+            showNetworkConnectionErrorAlert: true,
+            showLoadingBlockIndexAlert: false
         })
       } else {
         this.setState({
-            panelBodyPendingText: 'The provided credentials are not authorized to access this server. Please, go to settings and double check your credentials.',
-            panelBodyPendingTextHidden: false,
+            networkErrorAlertMessage: 'The provided credentials are not authorized to access this server. Please, go to settings and double check your credentials.',
+            panelHeaderButtonHidden: true,
             showLoadingIndicator: false,
-            panelHeaderButtonHidden: true          
+            showNetworkConnectionErrorAlert: true,
+            showLoadingBlockIndexAlert: false,         
         })
       }
     })  
@@ -143,26 +147,32 @@ export default class BitcoinPanel extends Component {
   renderRowWithColumn(title, description = 'No Data') {
     return(
       <React.Fragment>
-        {/* <Grid width={96} gap={16}>
-        <span style={{ fontWeight: 'bold', textAlign: 'left'}}>{title}</span>
-        <span style={{ fontWeight: 'normal', textAlign: 'right'}}>{description}</span>
-        </Grid>
-        <br /> */}
-      </React.Fragment>
+      <Row>
+        <Col>
+          <strong>{title}</strong>
+        </Col>
+        <Col>
+          {description}
+        </Col>
+      </Row>
+      <br />
+    </React.Fragment>
     )
   }
 
   renderBlockRowWithColumn(title, description = 'No Data') {
     return(
       <React.Fragment>
-        {/* <Grid width={20}>
-        <span style={{ fontWeight: 'bold', textAlign: 'left'}}>{title}</span>
-        <span style={{ textAlign: 'right'}}><Progress animated color="info" value={(this.state.blocks/this.state.headers)*100}>{((this.state.blocks/this.state.headers)*100).toFixed(2)}%</Progress>
-        <span style={{ textAlign: 'right'}}>{this.state.blocks} of {this.state.headers}</span>
-        </span>
-        </Grid>
-        <br /> */}
-      </React.Fragment>
+      <Row>
+        <Col>
+          <strong>{title}</strong>
+        </Col>
+        <Col>
+        <Progress value={(this.state.blocks/this.state.headers)*100}>{this.state.blocks} of {this.state.headers} ({((this.state.blocks/this.state.headers)*100).toFixed(2)}%)</Progress>
+        </Col>
+      </Row>
+      <br />
+    </React.Fragment>
     )
   }
 
@@ -189,7 +199,13 @@ export default class BitcoinPanel extends Component {
             {this.state.networkErrorAlertMessage}
             </p>
             <p>
-              <Button color="danger" onClick={() => this.getNodeStatus()}>Retry</Button>
+              <Button color="danger" onClick={() => 
+              this.setState({ 
+                showLoadingIndicator: true, 
+                showNetworkConnectionErrorAlert: false,
+                showLoadingBlockIndexAlert: false   
+              },() => () => this.getNodeStatus())
+            } >Retry</Button>
             </p>
           </Alert>
         </React.Fragment>
@@ -234,10 +250,10 @@ export default class BitcoinPanel extends Component {
     return (
         <React.Fragment>
           <PanelHeader title="Bitcoin" subtitle="Daemon Status" />
-          {this.state.showNetworkConnectionErrorAlert && this.networkConnectionErrorAlert()}
-          {this.state.showLoadingBlockIndexAlert && this.loadingBlockIndexAlert()}
-          {this.state.showInitialDownloadAlert && this.initialDownloadAlert()}
           <Container>
+            {this.state.showNetworkConnectionErrorAlert && this.networkConnectionErrorAlert()}
+            {this.state.showLoadingBlockIndexAlert && this.loadingBlockIndexAlert()}
+            {this.state.showInitialDownloadAlert && this.initialDownloadAlert()}
             {this.state.showLoadingIndicator && this.renderLoadingIndicator()}
             {!this.state.showLoadingIndicator && this.renderData()}
           </Container>
