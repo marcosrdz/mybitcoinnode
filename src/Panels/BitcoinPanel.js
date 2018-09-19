@@ -160,7 +160,7 @@ export default class BitcoinPanel extends Component {
     )
   }
 
-  renderBlockRowWithColumn(title, description = 'No Data') {
+  renderBlockRowWithColumn(title) {
     return(
       <React.Fragment>
       <Row>
@@ -204,7 +204,7 @@ export default class BitcoinPanel extends Component {
                 showLoadingIndicator: true, 
                 showNetworkConnectionErrorAlert: false,
                 showLoadingBlockIndexAlert: false   
-              },() => () => this.getNodeStatus())
+              },() => this.getNodeStatus())
             } >Retry</Button>
             </p>
           </Alert>
