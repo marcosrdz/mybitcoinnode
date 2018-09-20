@@ -1,13 +1,15 @@
 
 
 import React, { Component } from 'react'
-import { Container, Row, Col } from 'reactstrap'
+import { Container, Row, Col, Button } from 'reactstrap'
 import APIClient from '../APIClient'
 import PanelHeader from './PanelHeader'
+import Alerts from './Alerts'
 
 export default class AddressesPanel extends Component {
 
     state = {
+      alertSubtitleText: false,
       panelHeaderShowLoadingIndicator: false,
         panelConfiguration: {
             panelBodyPendingText: '',
@@ -57,6 +59,7 @@ export default class AddressesPanel extends Component {
         }).catch((error) => {
           if (error.name === 'TypeError') {
             this.setState({
+              alertSubtitleText: 'The provided host name is not reachable.',
               panelHeaderShowLoadingIndicator: false,
               panelConfiguration : {
                 panelBodyPendingText: 'The provided host name is not reachable.',
@@ -69,9 +72,9 @@ export default class AddressesPanel extends Component {
           }
           else if (error.statusCode === 502) {
             this.setState({
+              alertSubtitleText: 'Bitcoin Core RPC Server is not reachable',
               panelHeaderShowLoadingIndicator: false,
               panelConfiguration : {
-                panelBodyPendingText: 'Bitcoin Core RPC Server is not reachable.',
                 panelBodyPendingTextHidden: false,
                 panelHeaderButton: {
                   panelHeaderButtonHidden: true,
@@ -81,8 +84,8 @@ export default class AddressesPanel extends Component {
           } else {
             this.setState({
               panelHeaderShowLoadingIndicator: false,
+              alertSubtitleText: 'The provided credentials are not authorized to access this server. Please, go to settings and double check your credentials.',
               panelConfiguration : {
-                panelBodyPendingText: 'The provided credentials are not authorized to access this server. Please, go to settings and double check your credentials.',
                 panelBodyPendingTextHidden: false,
                 panelHeaderButton: {
                   panelHeaderButtonHidden: true          
@@ -201,7 +204,22 @@ export default class AddressesPanel extends Component {
           </React.Fragment>
         )
       } else {
-          return (<React.Fragment>{this.state.panelConfiguration.panelBodyPendingText}<br/></React.Fragment>)
+          return (
+            <Alerts 
+            color="danger"
+            title="Network Error" 
+            subtitle={this.state.alertSubtitleText}
+            bottomComponent={
+              <Button color="danger" onClick={() => 
+                  this.setState({ 
+                    showLoadingIndicator: true, 
+                    showNetworkConnectionErrorAlert: false,
+                    showLoadingBlockIndexAlert: false   
+                  },() => this.getNodeStatus())
+                } >Retry</Button>
+            } 
+            />
+          )
       }
   }
 

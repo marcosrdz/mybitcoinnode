@@ -1,11 +1,20 @@
-import React, { Component } from 'react'
+import React from 'react'
+import { Alert } from 'reactstrap'
 
-export default class Alerts extends Component {
-  render() {
+const Alerts = ({ color, title, subtitle, bottomComponent }) => {
     return (
-      <div>
-        
-      </div>
+        <React.Fragment>
+        <Alert color={color}>
+            <h4>{title}</h4>
+            <p>
+            {subtitle}
+            </p>
+            <p>
+            {bottomComponent}
+            </p>
+          </Alert>
+        </React.Fragment>
     )
-  }
 }
+
+export default Alerts

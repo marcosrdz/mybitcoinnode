@@ -1,9 +1,10 @@
 
 
 import React, { Component } from 'react'
-import { Alert, Button, Container, Row, Col, Progress } from 'reactstrap'
+import { Button, Container, Row, Col, Progress } from 'reactstrap'
 import PanelHeader from './PanelHeader'
 import APIClient from '../APIClient'
+import Alerts from './Alerts'
 import { PulseLoader } from 'react-spinners'
 
 export default class BitcoinPanel extends Component {
@@ -198,55 +199,49 @@ export default class BitcoinPanel extends Component {
   }
 
   networkConnectionErrorAlert() {
-    return(
-      <React.Fragment>
-        <Alert color="danger">
-            <h4>Network Error</h4>
-            <p>
-            {this.state.networkErrorAlertMessage}
-            </p>
-            <p>
-              <Button color="danger" onClick={() => 
+    return (
+      <Alerts 
+        color="danger"
+        title="Network Error" 
+        subtitle={this.state.networkErrorAlertMessage}
+        bottomComponent={
+          <Button color="danger" onClick={() => 
               this.setState({ 
                 showLoadingIndicator: true, 
                 showNetworkConnectionErrorAlert: false,
                 showLoadingBlockIndexAlert: false   
               },() => this.getNodeStatus())
             } >Retry</Button>
-            </p>
-          </Alert>
-        </React.Fragment>
+        } 
+        />
     )
   }
 
   loadingBlockIndexAlert() {
     return(
-      <React.Fragment>
-        <Alert color="primary">
-        <strong>Loading block index...</strong>
-          </Alert>
-      </React.Fragment>
-    )
+      <Alerts 
+        color="primary"
+        subtitle={<strong>Loading block index...</strong>}
+      />
+      )
   }
 
   renderNodeHasShutDownAlert() {
     return(
-      <React.Fragment>
-        <Alert color="info">
-        <strong>Bitcoin Daemon has been shut down.</strong>
-          </Alert>
-      </React.Fragment>
-    )
+      <Alerts 
+      color="info"
+      subtitle={<strong>Bitcoin Daemon has been shut down.</strong>}
+      />
+      )
   }
 
   initialDownloadAlert() {
     return(
-      <React.Fragment>
-        <Alert color="primary">
-        <strong>This is the initial download of all blocks. This could take a very long time, depending on your connection speed and node performance.</strong>
-        </Alert>
-      </React.Fragment>
-    )
+      <Alerts 
+      color="primary"
+      subtitle={<strong>This is the initial download of all blocks. This could take a very long time, depending on your connection speed and node performance.</strong>}
+      />
+      )
   }
 
   renderLoadingIndicator() {
