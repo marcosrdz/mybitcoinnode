@@ -9,11 +9,7 @@ import { PulseLoader } from 'react-spinners'
 export default class BitcoinPanel extends Component {
 
   state = {
-    showLoadingIndicator: true,
-    panelHeaderButtonButtonStyle: 'primary',
-    panelHeaderButtonDisabled: true,
-    panelHeaderButtonHidden: true,
-    panelHeaderButtonOnPress: () => {},
+    /* UI Data */
     pruned: undefined, 
     blocks: '0', 
     headers: undefined,
@@ -21,22 +17,31 @@ export default class BitcoinPanel extends Component {
     btcCoreVersion: undefined,
     minrelaytxfee: undefined,
     txmempool: undefined,
+    /* Alerts, Indicators, Buttons visibility */
+    showLoadingIndicator: true,
+    showPanelButtonComponent: false,
     showNetworkConnectionErrorAlert: false,
     showLoadingBlockIndexAlert: false,
-    loadingBlockIndexAlertText: 'Loading block index...',
     showInitialDownloadAlert: false,
-    networkErrorAlertMessage: "The network connection was lost when attempting to collect the information from your node. This may be due to your node being under heavy load.    "
+    showNodeHasBeenShutDownAlert: false,
+    /* Alerts, Indicators, and Buttons UI */
+    networkErrorAlertMessage: "The network connection was lost when attempting to collect the information from your node. This may be due to your node being under heavy load.",
+    loadingBlockIndexAlertText: 'Loading block index...',
+    panelHeaderButtonOnPress: () => { this.getNodeToShutDown() }
   }
 
   getNodeToShutDown() {
     this.setState({
       showLoadingIndicator: true,
-      panelHeaderButtonHidden: true
     }, () => {
-        APIClient.stopDaemon().then((response) => {
+        APIClient.stopDaemon().then(() => {
           this.setState({
             showLoadingIndicator: false,
-            panelHeaderButtonHidden: true
+            showPanelButtonComponent: false,
+            showNetworkConnectionErrorAlert: false,
+            showInitialDownloadAlert: false,
+            showLoadingBlockIndexAlert: false,
+            showNodeHasBeenShutDownAlert: true
           })
         })
       }
@@ -68,7 +73,8 @@ export default class BitcoinPanel extends Component {
             txmempool: values[3].result.size,
             showLoadingIndicator: false,         
             showNetworkConnectionErrorAlert: false,    
-            showLoadingBlockIndexAlert: false   
+            showLoadingBlockIndexAlert: false,
+            showPanelButtonComponent: true   
           })
       }).catch(error => {
         console.log('There was an error with 1 or more API calls.')
@@ -76,19 +82,26 @@ export default class BitcoinPanel extends Component {
         this.setState({ 
           showLoadingIndicator: false, 
           showNetworkConnectionErrorAlert: true,
-          showLoadingBlockIndexAlert: false   
+          showLoadingBlockIndexAlert: false,
+          showPanelButtonComponent: false
         })
       })
     })
   }
 
   getNodeStatus() {
+    this.setState({ 
+      showPanelButtonComponent: false, 
+      showLoadingIndicator: true,
+      showLoadingBlockIndexAlert: false,
+      showNodeHasBeenShutDownAlert: false,
+      showInitialDownloadAlert: false
+    })
     console.log('Getting node status...')
     APIClient.getPingResult().then((data) => { 
       if (data.error !== null && data.error.code === -28) {
         this.setState({
           showLoadingIndicator: true,
-          panelHeaderButtonHidden: true,
           showNetworkConnectionErrorAlert: false,
           showLoadingBlockIndexAlert: true,
           loadingBlockIndexAlertText: data.error.message
@@ -97,20 +110,14 @@ export default class BitcoinPanel extends Component {
         this.setState({
           showNetworkConnectionErrorAlert: false,
           showLoadingBlockIndexAlert: false,
+          showInitialDownloadAlert: false,
           showLoadingIndicator: true,
-          panelHeaderButtonButtonStyle: 'danger',
-          panelHeaderButtonHidden: true,
-          panelHeaderButtonText: 'Stop',
-          panelHeaderButtonOnPress: () => { 
-            if (window.confirm('Are you sure you wish to shut down your Bitcoin Server?')) this.getNodeToShutDown()             
-          }
         }, () => this.getNetworkInformation())
       }
     }).catch((error) => {
       if (error.name === 'TypeError') {
         this.setState({
             networkErrorAlertMessage: 'The provided host name is not reachable.',
-            panelHeaderButtonHidden: true,
             showLoadingIndicator: false,
             showNetworkConnectionErrorAlert: true,
             showLoadingBlockIndexAlert: false,
@@ -118,7 +125,7 @@ export default class BitcoinPanel extends Component {
       }
       else if (error.statusCode === 502) {
         this.setState({
-            networkErrorAlertMessage: 'The Bitcoin Daemon seems to be unresponsive.',
+            networkErrorAlertMessage: 'The Bitcoin Daemon has refused your connection. Please, make sure your Bitcoin configuration file allows RPC requests that are made from your IP address.',
             showLoadingIndicator: false,
             showInitialDownloadAlert: false,
             showNetworkConnectionErrorAlert: true,
@@ -127,10 +134,10 @@ export default class BitcoinPanel extends Component {
       } else {
         this.setState({
             networkErrorAlertMessage: 'The provided credentials are not authorized to access this server. Please, go to settings and double check your credentials.',
-            panelHeaderButtonHidden: true,
+            showPanelButtonComponent : false,
             showLoadingIndicator: false,
             showNetworkConnectionErrorAlert: true,
-            showLoadingBlockIndexAlert: false,         
+            showLoadingBlockIndexAlert: false      
         })
       }
     })  
@@ -222,6 +229,16 @@ export default class BitcoinPanel extends Component {
     )
   }
 
+  renderNodeHasShutDownAlert() {
+    return(
+      <React.Fragment>
+        <Alert color="info">
+        <strong>Bitcoin Daemon has been shut down.</strong>
+          </Alert>
+      </React.Fragment>
+    )
+  }
+
   initialDownloadAlert() {
     return(
       <React.Fragment>
@@ -246,16 +263,27 @@ export default class BitcoinPanel extends Component {
     )
   }
 
+  renderPanelHeaderRightComponent() {
+    return(
+      <React.Fragment>
+        <Button color="danger" onClick={() => { if (window.confirm('Are you sure you wish to shut down your Bitcoin Server?')) this.getNodeToShutDown()}} >
+          Shut Down
+        </Button>
+      </React.Fragment>
+    )
+  }
+
   render() {
     return (
         <React.Fragment>
-          <PanelHeader title="Bitcoin" subtitle="Daemon Status" />
+          <PanelHeader title="Bitcoin" subtitle="Daemon Status" rightComponent={this.state.showPanelButtonComponent ? this.renderPanelHeaderRightComponent() : null } />
           <Container>
+            {this.state.showNodeHasBeenShutDownAlert && this.renderNodeHasShutDownAlert()}
             {this.state.showNetworkConnectionErrorAlert && this.networkConnectionErrorAlert()}
             {this.state.showLoadingBlockIndexAlert && this.loadingBlockIndexAlert()}
             {this.state.showInitialDownloadAlert && this.initialDownloadAlert()}
             {this.state.showLoadingIndicator && this.renderLoadingIndicator()}
-            {!this.state.showLoadingIndicator && this.renderData()}
+            {!this.state.showLoadingIndicator && !this.state.showNodeHasBeenShutDownAlert && this.renderData()}
           </Container>
       </React.Fragment>
     )
