@@ -66,16 +66,19 @@ export default class Header extends Component {
                   <NavItem>
                     <NavLink active={this.state.active === 4} href="/device">Device</NavLink>
                   </NavItem>
-                  <UncontrolledDropdown nav inNavbar>
+                  <NavItem>
+                    <NavLink disabled>|</NavLink>
+                  </NavItem>
+                  <UncontrolledDropdown nav inNavbar right>
                     <DropdownToggle nav caret>
                       Settings
                     </DropdownToggle>
-                    <DropdownMenu right>
+                    <DropdownMenu right disabled>
                       <DropdownItem>
                         Settings
                       </DropdownItem>
                       <DropdownItem>
-                        Bitcoin Daemon
+                        Bitcoin Settings
                       </DropdownItem>
                     </DropdownMenu>
                   </UncontrolledDropdown>
