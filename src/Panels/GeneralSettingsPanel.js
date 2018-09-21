@@ -13,9 +13,7 @@ export default class GeneralSettingsPanel extends Component {
     this.state = {
       showLoadingIndicator: false,
       data: {
-        webUIBitcoinRPCProtocol:  'http',
         webUIBitcoinRPCHost: '',
-        webUIBitcoinRPCPort: '',
         webUIBitcoinRPCUser: '',
         webUIBitcoinRPCPassword: ''
       }
@@ -27,12 +25,9 @@ export default class GeneralSettingsPanel extends Component {
       this.setState({showLoadingIndicator: false, 
         data: {
           webUIBitcoinRPCHost: response.host,
-          webUIBitcoinRPCPort: response.port,
           webUIBitcoinRPCUser: response.username,
           webUIBitcoinRPCPassword: response.password,
-          webUIBitcoinRPCProtocol:  'http'
       }})
-
     }).catch(error => {
       this.setState({showLoadingIndicator: false})
     })
@@ -67,15 +62,15 @@ export default class GeneralSettingsPanel extends Component {
             <br/>
             <FormGroup>
             <Label for="webUIBitcoinRPCHost">Host</Label>
-            <Input type="text" name="webUIBitcoinRPCHost" id="webUIBitcoinRPCHost" onChange={this.handleChange} disabled={this.state.showLoadingIndicator} />
+            <Input defaultValue={this.state.data.webUIBitcoinRPCHost} type="text" name="webUIBitcoinRPCHost" id="webUIBitcoinRPCHost" onChange={this.handleChange} disabled={this.state.showLoadingIndicator} />
             </FormGroup>
             <FormGroup>
             <Label for="webUIBitcoinRPCUser">Username</Label>
-            <Input type="text" name="webUIBitcoinRPCUser" id="webUIBitcoinRPCUser" onChange={this.handleChange} disabled={this.state.showLoadingIndicator} />
+            <Input defaultValue={this.state.data.webUIBitcoinRPCUser} type="text" name="webUIBitcoinRPCUser" id="webUIBitcoinRPCUser" onChange={this.handleChange} disabled={this.state.showLoadingIndicator} />
             </FormGroup>
             <FormGroup>
             <Label for="webUIBitcoinRPCPassword">Password</Label>
-            <Input type="password" name="webUIBitcoinRPCPassword" id="webUIBitcoinRPCPassword" onChange={this.handleChange} disabled={this.state.showLoadingIndicator} />
+            <Input defaultValue={this.state.data.webUIBitcoinRPCPassword} type="password" name="webUIBitcoinRPCPassword" id="webUIBitcoinRPCPassword" onChange={this.handleChange} disabled={this.state.showLoadingIndicator} />
             </FormGroup>
             <Button type="submit" onChange={this.handleChange} onClick={this.submitPressed}>Save</Button>
         </Form>
@@ -99,11 +94,12 @@ export default class GeneralSettingsPanel extends Component {
   render() {
     return (
         <React.Fragment>
-        <PanelHeader title="Settings" subtitle="General"/>
-        <Container>
-          {this.renderPanelBody()}
-        </Container>
-      </React.Fragment>
+            <PanelHeader title="Settings" subtitle="General"/>
+            <Container>
+                {this.state.showLoadingIndicator && this.renderLoadingIndicator()}
+                {!this.state.showLoadingIndicator && this.renderPanelBody()}
+            </Container>
+        </React.Fragment>
     )
   }
 }
