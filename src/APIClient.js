@@ -194,8 +194,3 @@ export default class APIClient {
 }
 
 const useSampleJSON = false
-
-const responses = {
-    bitcoinServerAuthenticationProvidedInvalid: 'The provided credentials are not authorized to access this server.',
-    bitcoinServerStopping: 'Bitcoin server stopping'
-}

@@ -42,23 +42,25 @@ class App extends Component {
   
   render() {
     return(
-      <Router> 
-        <React.Fragment>       
+      <div>
         <Header />
         <br />  
-          <AlertServerNotRunning renderAlert={this.state.showServerAlert}/>
+            <AlertServerNotRunning renderAlert={this.state.showServerAlert}/>
         <br />
-        <Switch>
-        <Route exact path='/bitcoin' component={Bitcoin} />
-        <Route exact path="/" component={() => <Redirect to="/bitcoin" />}/>
-        <Route exact path='/lightning' component={Lightning} />
-        <Route exact path='/electrum' component={Electrum} />
-        <Route exact path='/explorer' component={Explorer} />
-        <Route exact path='/device' component={Device} />
-        <Route exact path='/generalSettings' component={GeneralSettings} />
-          </Switch>
-        </React.Fragment>
-      </Router>
+        <Router> 
+          <React.Fragment>       
+            <Switch>
+              <Route exact path='/bitcoin' component={Bitcoin} />
+              <Route exact path="/" component={() => <Redirect to="/bitcoin" />}/>
+              <Route exact path='/lightning' component={Lightning} />
+              <Route exact path='/electrum' component={Electrum} />
+              <Route exact path='/explorer' component={Explorer} />
+              <Route exact path='/device' component={Device} />
+              <Route exact path='/generalSettings' component={GeneralSettings} />
+            </Switch>
+          </React.Fragment>
+        </Router>
+      </div>
     )
   }
 }
