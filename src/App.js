@@ -7,7 +7,7 @@ import Lightning from './Lightning'
 import Electrum from './Electrum'
 import Explorer from './Explorer'
 import Device from './Device'
-import Settings from './Settings'
+import GeneralSettings from './GeneralSettings'
 
 class App extends Component {
 
@@ -55,7 +55,7 @@ class App extends Component {
         <Route exact path='/electrum' component={Electrum} />
         <Route exact path='/explorer' component={Explorer} />
         <Route exact path='/device' component={Device} />
-        <Route exact path='/settings' component={Settings} />
+        <Route exact path='/generalSettings' component={GeneralSettings} />
           </Switch>
         </React.Fragment>
       </Router>

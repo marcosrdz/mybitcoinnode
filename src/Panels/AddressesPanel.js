@@ -5,6 +5,7 @@ import { Container, Row, Col, Button } from 'reactstrap'
 import APIClient from '../APIClient'
 import PanelHeader from './PanelHeader'
 import Alerts from './Alerts'
+import { PulseLoader } from 'react-spinners'
 
 export default class AddressesPanel extends Component {
 
@@ -224,7 +225,6 @@ export default class AddressesPanel extends Component {
   }
 
   render() {
-    const panelConfiguration = this.state.panelConfiguration
     return (
       <React.Fragment>
         <PanelHeader title="Addresses" subtitle="Your Network" showLoadingIndicator={this.state.panelHeaderShowLoadingIndicator} />

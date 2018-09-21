@@ -73,12 +73,12 @@ export default class Header extends Component {
                     <DropdownToggle nav caret>
                       Settings
                     </DropdownToggle>
-                    <DropdownMenu right disabled>
-                      <DropdownItem>
-                        Settings
+                    <DropdownMenu right>
+                      <DropdownItem href="/generalSettings">
+                        General
                       </DropdownItem>
-                      <DropdownItem>
-                        Bitcoin Settings
+                      <DropdownItem disabled>
+                        Bitcoin Daemon
                       </DropdownItem>
                     </DropdownMenu>
                   </UncontrolledDropdown>
