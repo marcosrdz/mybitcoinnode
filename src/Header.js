@@ -56,8 +56,11 @@ export default class Header extends Component {
                   <DropdownItem href="/generalSettings">
                     General
                   </DropdownItem>
-                  <DropdownItem disabled>
+                  <DropdownItem href="/bitcoinSettings">
                     Bitcoin Daemon
+                  </DropdownItem>
+                  <DropdownItem disabled>
+                    Network
                   </DropdownItem>
                 </DropdownMenu>
               </UncontrolledDropdown>
